@@ -19,7 +19,7 @@ export const getDataById = (table, id) => {
 }
 
 export const init = async table => {
-   const isDebug = true || process.env.NODE_ENV === "development"
+   const isDebug = process.env.NODE_ENV === "development"
    const list = get(initlist)
    const exist = list.findIndex(t => t === table)
    if (exist === -1) {
