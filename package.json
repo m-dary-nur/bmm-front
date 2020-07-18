@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "build": "rollup -c",
+    "build": "npx routify --single-build && rollup -c",
     "dev": "routify -c dev:svelte",
     "dev:svelte": "rollup -c -w",
     "start:default": "sirv public",
