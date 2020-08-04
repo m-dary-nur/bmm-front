@@ -1,6 +1,6 @@
 import Cookies from "js-cookie"
 
-export const apiUrl = process.env.NODE_ENV === "development" ? "http://localhost:13131" : "https://cv-bmm.site"
+export const apiUrl = process.env.NODE_ENV === "development" ? "http://localhost:13131" : "https://cv-bmm.site:13131"
 // export const apiUrl = "http://localhost:13131"
 
 export const options = {
