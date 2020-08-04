@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "build": "npx routify --single-build && rollup -c",
-    "dev": "routify -c dev:svelte",
+    "dev": "NODE_ENV=development routify -c dev:svelte",
     "dev:svelte": "rollup -c -w",
     "start:default": "sirv public",
     "start": "sirv public -d -s"

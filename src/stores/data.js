@@ -5,10 +5,28 @@ import { toast } from "../components/toast"
 
 export const initlist = writable([])
 
+export const branches = writable([])
 export const users = writable([])
+export const taxtypes = writable([])
+export const taxaccs = writable([])
+export const taxconfs = writable([])
+export const warehouses = writable([])
+export const suppliers = writable([])
+export const itemtypes = writable([])
+export const items = writable([])
+export const itemgroups = writable([])
 
 const dataStore = {
+   branches,
    users,
+   taxtypes,
+   taxaccs,
+   taxconfs,
+   warehouses,
+   suppliers,
+   itemtypes,
+   items,
+   itemgroups,
 }
 
 export const getDataById = (table, id) => {

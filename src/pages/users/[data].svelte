@@ -5,11 +5,14 @@
    import Fa from "svelte-fa"
    import { 
       faCogs,
+      faBuilding,
       faUsers,
-      faUserTie,
-      faBallPile,
-      faClipboardListCheck,
-      faFileSpreadsheet,
+      faFile,
+      faFileSignature,
+      faInventory,
+      faTruck,
+      faBoxFull,
+      faBoxes,
    } from "@fortawesome/pro-regular-svg-icons" 
 
 	import { appname, menu, menus } from "../../stores"
@@ -46,11 +49,14 @@
 
    const iconlist = {
       "cogs": faCogs,
+      "building": faBuilding,
       "users": faUsers,
-      "user-tie": faUserTie,
-      "ball-pile": faBallPile,
-      "clipboard-list-check": faClipboardListCheck,
-      "file-spreadsheet": faFileSpreadsheet,
+      "file": faFile,
+      "file-signature": faFileSignature,
+      "inventory": faInventory,
+      "truck": faTruck,
+      "box-full": faBoxFull,
+      "boxes": faBoxes,
    }
 
    const allow = (key, action) => $menu.findIndex(x => x.key === key && x.action === action) !== -1

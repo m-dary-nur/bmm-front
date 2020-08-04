@@ -1,5 +1,6 @@
 <script>
    import { goto } from "@sveltech/routify"
+   import Cookies from "js-cookie"
    import Fa from "svelte-fa"
    import { faBars, faBell, faUser, faSignOut } from "@fortawesome/pro-regular-svg-icons"
 
@@ -11,7 +12,7 @@
    let showNotification = false
 
    const logout = async () => {
-      await fetch.post(`api/logout`).then(res => {
+      await fetch.post(`/logout`).then(res => {
          if (res.success) {            
             Cookies.remove("my-session")
             unsetSession()

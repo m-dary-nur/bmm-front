@@ -2,7 +2,7 @@
    export let label = ""
    export let checked = false
    export let disabled = false
-   const handleClick = e => checked = !checked
+   const handleClick = () => checked = !checked
 </script>
 
 <label class={`${disabled && "cursor-not-allowed"} flex items-center text-md select-none cursor-pointer leading-loose whitespace-no-wrap`}>

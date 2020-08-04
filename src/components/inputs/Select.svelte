@@ -65,8 +65,8 @@
    <Fa icon={faSort} class="text-gray-500" />
 </button>
 {#if showOptions}
-   <div out:fade class="relative animate-slide-in-down z-30">
-      <div class="absolute w-full bg-white border-r border-l border-b border-theme rounded-b-lg shadow-lg top-34px">
+   <div out:fade class="top-34px relative animate-slide-in-down z-30">
+      <div class="select-option-wrapper absolute w-full bg-white border-r border-l border-b border-theme rounded-b-lg shadow-lg">
          <ul class="pb-2">
             <li class="px-3 py-1 leading-7 hidden"></li>
             {#if items.length > 0}
@@ -82,6 +82,11 @@
 {/if}
 
 <style>
+   .select-option-wrapper {
+      max-height: 200px;
+      overflow-y: auto;
+   }
+
    .top-34px {
       top: 34px;
    }
