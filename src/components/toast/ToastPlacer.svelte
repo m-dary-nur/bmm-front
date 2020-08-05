@@ -21,7 +21,7 @@
    <div class="flex justify-center">
       <div class="animate-slide-in-down bg-white mx-auto rounded-lg border-gray-300 border p-3 shadow-lg">
          <div class="flex flex-row">
-            <div class="px-2 flex items-center">
+            <div class={`px-2 flex items-center ${$toaster.iconColor}`}>
                <Fa icon={$toaster.icon} class={$toaster.iconColor} size="2x" />
             </div>
             <div class="ml-2 mr-6">
