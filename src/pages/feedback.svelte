@@ -62,7 +62,6 @@
    <div class="w-full md:pt-2 md:px-6 scrolling-auto">
       <div class="w-full md:w-10/12 xl:w-8/12 md:pr-4 md:border-r border-gray-300">
          <form class="w-full"> 
-            {JSON.stringify(initialState)}
             <div class="control md:w-1/2">
                <Select bind:value={form.type} items={types} itemId="id" itemLabel="label" />
                <label>jenis *</label>
