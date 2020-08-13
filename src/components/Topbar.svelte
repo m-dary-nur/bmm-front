@@ -46,17 +46,6 @@
       <div class="flex justify-end">
          <button on:click={() => $goto("/feedback")} class="md:mx-1 h-10 w-10 flex justify-center items-center cursor-pointer border-0 rounded-full hover:bg-gray-300 hover:text-yellow-600">
             <Fa icon={faCommentExclamation} class="text-red-500" />
-            <div class="relative">
-               <div class="absolute mt-8" style="right: -10px">
-                  {#if showNotification}
-                     <div class="animate-slide-in-down flex flex-col py-2 bg-white shadow border-gray-400 rounded cursor-default">
-                        <div class="px-6 py-4 text-left text-gray-500 whitespace-no-wrap cursor-default">
-                           Tidak ada pemberitahuan.
-                        </div>
-                     </div>
-                  {/if}
-               </div>
-            </div>
          </button>
          <button
             on:click={() => showNotification = !showNotification}
