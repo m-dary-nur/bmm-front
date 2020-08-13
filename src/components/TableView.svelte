@@ -53,7 +53,7 @@
             on:keyup={({ target: { value } }) => debounce(value)} 
             class="w-full bg-transparent px-2 leading-7 border-0 border-b-2 focus:border-theme transition-colors duration-300"
             placeholder="Cari..."
-            spellcheck="false"
+            spellcheck={false}
          />
       </div>
    </div>

@@ -24,6 +24,7 @@
    const id = data === "new" ? null : data
    const action = data === "new" ? "add" : "edit"
 	const initialState = {
+      id: "",
       code: "",
       name: "",
 		email: "",

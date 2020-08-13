@@ -24,6 +24,7 @@
    const id = data === "new" ? null : data
    const action = data === "new" ? "add" : "edit"
 	const initialState = {
+      id: "",
       branchId: "",
       name: "",
 		description: "",
@@ -83,6 +84,7 @@
 
 {#if $menu && allow("warehouses", action)}
 <div in:fade class="pt-2 md:pt-8">
+   {JSON.stringify(form)}
    <div class="flex justify-between items-center px-4 pb-4 md:px-8 border-b border-gray-200 md:border-transparent">
       <h3 class="text-theme text-lg font-bold">{action === "edit" ? "Ubah" : "Buat"} Gudang</h3>
       <ButtonBack on:click={() => $goto("/warehouses")} disabled={$menu && !allow("warehouses", "view")} />

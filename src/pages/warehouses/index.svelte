@@ -18,10 +18,10 @@
          { key: "branchId", label: "Cabang", render: x => {
             const o = $branches.find(y => y.id === x.branchId)
             if (o) return o.name
-            return ""
+            return "-"
          }},
          { key: "name", label: "nama gudang" },
-         { key: "description", label: "deskripsi" },
+         { key: "description", label: "deskripsi", render: x => x.description !== null && x.description !== "" ? x.description : "-" },
          { key: "active", label: "aktif", render: x => (x.active === 1 ? "Ya" : "Tidak") },
       ],
       actions: [

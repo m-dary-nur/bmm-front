@@ -36,9 +36,12 @@
       fetch.post(`/feedbacks`, { ...form, log }).then(res => {
          loading = false
          if (res.success) {
-            form = initialState
-
-            console.log(form, "init:", initialState)
+            form = {
+               type: "bug",
+               title: "",
+               description: "",
+               urgent: false,
+            }
             toast.success("Berhasil dikirim",res.message)
          } else {
             toast.danger("Gagal",res.message)

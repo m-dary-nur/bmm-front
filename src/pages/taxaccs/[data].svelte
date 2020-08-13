@@ -24,6 +24,7 @@
    const id = data === "new" ? null : data
    const action = data === "new" ? "add" : "edit"
 	const initialState = {
+      id: "",
       isBankAcc: false,
       no: "",
       name: "",
@@ -110,7 +111,7 @@
             </div>
             <div class="flex flex-col md:flex-row">					
                <div class="control md:w-1/2">
-                  <Select bind:value={form.taxTypeId} items={$taxtypes} itemId="id" itemLabel="name" />
+                  <Select bind:value={form.taxTypeId} items={$taxtypes} itemId="id" itemLabel="name" searchable />
                   <label>tipe akun *</label>
                </div>
                <div class="control md:w-1/2">

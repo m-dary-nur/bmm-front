@@ -24,6 +24,7 @@
    const id = data === "new" ? null : data
    const action = data === "new" ? "add" : "edit"
 	const initialState = {
+      id: "",
       code: "",
       name: "",
 		ratePc: "",
@@ -101,11 +102,11 @@
                   <label>rate pajak (%)*</label>
                </div>
                <div class="control md:w-5/12">
-                  <Select bind:value={form.taxAccInId} items={$taxaccs} itemId="id" itemLabel="name" />
+                  <Select bind:value={form.taxAccInId} items={$taxaccs} itemId="id" itemLabel="name" searchable />
                   <label>akun masukan *</label>
                </div> 
                <div class="control md:w-5/12">
-                  <Select bind:value={form.taxAccOutId} items={$taxaccs} itemId="id" itemLabel="name" />
+                  <Select bind:value={form.taxAccOutId} items={$taxaccs} itemId="id" itemLabel="name" searchable />
                   <label>akun keluaran *</label>
                </div>               
             </div>                

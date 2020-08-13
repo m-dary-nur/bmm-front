@@ -16,8 +16,8 @@
       countLabel: "pemasok",
       heads: [
          { key: "name", label: "nama pemasok" },
-         { key: "email", label: "email" },
-         { key: "phone", label: "telp" },
+         { key: "email", label: "email", render: x => x.email !== null && x.email !== "" ? x.email : "-" },
+         { key: "phone", label: "telp", render: x => x.phone !== null && x.phone !== "" ? x.phone : "-" },
          { key: "address", label: "alamat" },
          { key: "active", label: "aktif", render: x => (x.active === 1 ? "Ya" : "Tidak") },
       ],

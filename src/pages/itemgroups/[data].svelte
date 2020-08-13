@@ -23,6 +23,7 @@
    const id = data === "new" ? null : data
    const action = data === "new" ? "add" : "edit"
 	const initialState = {
+      id: "",
       name: "",
       itemTypeId: "",
 		taxAccSupplyId: "",
@@ -100,41 +101,41 @@
             </div>
             <div class="flex flex-col md:flex-row">
                <div class="control md:w-1/2">
-                  <Select bind:value={form.itemTypeId} items={$itemtypes} itemId="id" itemLabel="name" />
+                  <Select bind:value={form.itemTypeId} items={$itemtypes} itemId="id" itemLabel="name" searchable />
                   <label>tipe produk *</label>
                </div>   
                <div class="control md:w-1/2">
-                  <Select bind:value={form.taxAccUncollectedPurchaseId} items={$taxaccs} itemId="id" itemLabel="name" />
+                  <Select bind:value={form.taxAccUncollectedPurchaseId} items={$taxaccs} itemId="id" itemLabel="name" searchable />
                   <label>akun pembelian belum tertagih *</label>
                </div>              
             </div>
             <div class="flex flex-col md:flex-row">
                <div class="control md:w-1/2">
-                  <Select bind:value={form.taxAccSupplyId} items={$taxaccs} itemId="id" itemLabel="name" />
+                  <Select bind:value={form.taxAccSupplyId} items={$taxaccs} itemId="id" itemLabel="name" searchable />
                   <label>akun persediaan *</label>
                </div>   
                <div class="control md:w-1/2">
-                  <Select bind:value={form.taxAccNonSupplyId} items={$taxaccs} itemId="id" itemLabel="name" />
+                  <Select bind:value={form.taxAccNonSupplyId} items={$taxaccs} itemId="id" itemLabel="name" searchable />
                   <label>akun non persediaan *</label>
                </div>                
             </div>
             <div class="flex flex-col md:flex-row">
                <div class="control md:w-1/2">
-                  <Select bind:value={form.taxAccSaleId} items={$taxaccs} itemId="id" itemLabel="name" />
+                  <Select bind:value={form.taxAccSaleId} items={$taxaccs} itemId="id" itemLabel="name" searchable />
                   <label>akun penjualan *</label>
                </div> 
                <div class="control md:w-1/2">
-                  <Select bind:value={form.taxAccDiscSaleId} items={$taxaccs} itemId="id" itemLabel="name" />
+                  <Select bind:value={form.taxAccDiscSaleId} items={$taxaccs} itemId="id" itemLabel="name" searchable />
                   <label>akun potongan penjualan *</label>
                </div>                
             </div>
             <div class="flex flex-col md:flex-row">
                <div class="control md:w-1/2">
-                  <Select bind:value={form.taxAccSentId} items={$taxaccs} itemId="id" itemLabel="name" />
+                  <Select bind:value={form.taxAccSentId} items={$taxaccs} itemId="id" itemLabel="name" searchable />
                   <label>akun terkirim *</label>
                </div> 
                <div class="control md:w-1/2">
-                  <Select bind:value={form.taxAccHppId} items={$taxaccs} itemId="id" itemLabel="name" />
+                  <Select bind:value={form.taxAccHppId} items={$taxaccs} itemId="id" itemLabel="name" searchable />
                   <label>akun HPP *</label>
                </div>                
             </div>

@@ -25,6 +25,7 @@
    const id = data === "new" ? null : data
    const action = data === "new" ? "add" : "edit"
 	const initialState = {
+      id: "",
       itemGroupId: "",
       code: "",
       barcode: "",
@@ -137,8 +138,8 @@
                </div>   
             </div>
             <div class="control md:w-2/3">
-               <Select bind:value={form.barcodeSupplier} items={$suppliers} itemId="code" itemLabel="name" />
-               <label>barcode pemasok</label>
+               <Select bind:value={form.barcodeSupplier} items={$suppliers} itemId="code" itemLabel={x => `${x.code} (${x.name})`} searchable />
+               <label>barcode nasional</label>
             </div>
             <div class="flex flex-col md:flex-row">					
                <div class="control md:w-1/2">

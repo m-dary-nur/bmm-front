@@ -19,12 +19,12 @@
          { key: "taxTypeId", label: "tipe akun", render: x => {
             const o = $taxtypes.find(y => y.id === x.taxTypeId)
             if (o) return o.name
-            return ""
+            return "-"
          }},
          { key: "taxAccParentId", label: "akun induk", render: x => {
             const o = $taxaccs.find(y => y.id === x.taxAccParentId)
             if (o) return o.name
-            return ""
+            return "-"
          }},
          { key: "no", label: "no. akun" },
          { key: "name", label: "nama akun" },
