@@ -27,7 +27,7 @@
       urgent: false,
    }
    
-	let form = initialState
+	let form = {...initialState}
    let loading = false
 
    const insert = () => {
@@ -36,12 +36,7 @@
       fetch.post(`/feedbacks`, { ...form, log }).then(res => {
          loading = false
          if (res.success) {
-            form = {
-               type: "bug",
-               title: "",
-               description: "",
-               urgent: false,
-            }
+            form = {...initialState}
             toast.success("Berhasil dikirim",res.message)
          } else {
             toast.danger("Gagal",res.message)

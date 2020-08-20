@@ -44,7 +44,7 @@
 		active: true,
    }
    
-	let form = initialState
+	let form = {...initialState}
 	let privileges = {}
    let loading = false
 
@@ -95,7 +95,7 @@
       fetch.post(`/users`, { ...form, privileges: privilegesString, log }).then(res => {
          loading = false
          if (res.success) {
-            form = initialState
+            form = {...initialState}
             toast.success("Berhasil dibuat",res.message)
          } else {
             toast.danger("Gagal",res.message)

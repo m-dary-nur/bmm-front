@@ -15,7 +15,6 @@
 
    const dispatch = createEventDispatcher()
 
-   let oldValue = ""
    let showOptions = false
    let index = -1   
    let staticFilteredItems = []
@@ -25,20 +24,17 @@
    const handleOpen = () => showOptions = true
    const handleClose = () => showOptions = false
    const handleClick = (item, i) => {
+      const oldValue = value
       index = i
       value = item[itemId]
       item[itemId]
       showOptions = false
+      if (oldValue !== item[itemId]) {
+         dispatch("change")
+      }
       if (searchable) {
          searchtext = ""
          filteredItems = staticFilteredItems
-      }
-   }
-
-   const change = () => {
-      if (items.length > 0) {
-         const i = items.findIndex(x => x[itemId] === value)
-         index = i
       }
    }
    
@@ -62,9 +58,7 @@
 
    const init = el => el.focus()
 
-   $: if (value) {
-      index = items.findIndex(x => x[itemId] === value)
-   }
+   $: index = items.findIndex(x => x[itemId] === value)
    
    $: if (items) {
       const showAll = filterHandler()

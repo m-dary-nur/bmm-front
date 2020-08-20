@@ -16,6 +16,11 @@ export const itemtypes = writable([])
 export const items = writable([])
 export const itemgroups = writable([])
 
+export const ppo = writable([])
+export const po = writable([])
+export const pi = writable([])
+export const pr = writable([])
+
 const dataStore = {
    branches,
    users,
@@ -27,6 +32,11 @@ const dataStore = {
    itemtypes,
    items,
    itemgroups,
+
+   ppo,
+   po,
+   pi,
+   pr,
 }
 
 export const getDataById = (table, id) => {

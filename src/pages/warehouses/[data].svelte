@@ -31,7 +31,7 @@
 		active: true,
    }
    
-	let form = initialState
+	let form = {...initialState}
    let loading = false
 
    const allow = (key, action) => $menu.findIndex(x => x.key === key && x.action === action) !== -1
@@ -42,7 +42,7 @@
       fetch.post(`/warehouses`, { ...form, log }).then(res => {
          loading = false
          if (res.success) {
-            form = initialState
+            form = {...initialState}
             toast.success("Berhasil dibuat",res.message)
          } else {
             toast.danger("Gagal",res.message)
@@ -84,7 +84,6 @@
 
 {#if $menu && allow("warehouses", action)}
 <div in:fade class="pt-2 md:pt-8">
-   {JSON.stringify(form)}
    <div class="flex justify-between items-center px-4 pb-4 md:px-8 border-b border-gray-200 md:border-transparent">
       <h3 class="text-theme text-lg font-bold">{action === "edit" ? "Ubah" : "Buat"} Gudang</h3>
       <ButtonBack on:click={() => $goto("/warehouses")} disabled={$menu && !allow("warehouses", "view")} />
@@ -107,7 +106,7 @@
                <label>deskripsi</label>
             </div>
             <div class="sticky bottom-0 bg-white flex justify-between items-center p-2 mt-4 border-t border-gray-300 shadow-bottom-bar">
-               <Switch bind:checked={form.active} label="aktifkan setting pajak ini" />
+               <Switch bind:checked={form.active} label="aktifkan gudang ini" />
                <Button
                   loading={loading}
                   on:click={action === "edit" ? update : insert}

@@ -13,7 +13,7 @@
 <button
    on:click={handleClick}
    type="button"
-   class="flex justify-center items-center px-4 py-2 bg-blue-500 text-white font-bold rounded-lg shadow-lg hover:bg-blue-600 hover:shadow-sm transition-shadow duration-300"
+   class="flex justify-center items-center px-4 py-2 bg-blue-500 text-white font-bold rounded-lg shadow-lg border-0 hover:bg-blue-600 hover:shadow-sm transition-shadow duration-300"
    {disabled}
 >
    {#if loading}

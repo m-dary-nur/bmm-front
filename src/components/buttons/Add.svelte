@@ -12,7 +12,7 @@
 <button
    on:click={handleClick}
    type="button"
-   class="flex justify-center items-center px-4 py-2 bg-green-500 text-white font-bold rounded-lg shadow-lg hover:bg-green-600 hover:shadow-sm transition-shadow duration-300"
+   class="flex justify-center items-center px-4 py-2 bg-green-500 text-white font-bold rounded-lg shadow-lg border-0 hover:bg-green-600 hover:shadow-sm transition-shadow duration-300"
    {disabled}
 >
    <Fa icon={faPlus} class="pr-2" /> baru

@@ -37,7 +37,7 @@
 		active: true,
    }
    
-	let form = initialState
+	let form = {...initialState}
    let loading = false
 
    const allow = (key, action) => $menu.findIndex(x => x.key === key && x.action === action) !== -1
@@ -48,7 +48,7 @@
       fetch.post(`/taxaccs`, { ...form, log }).then(res => {
          loading = false
          if (res.success) {
-            form = initialState
+            form = {...initialState}
             toast.success("Berhasil dibuat",res.message)
          } else {
             toast.danger("Gagal",res.message)

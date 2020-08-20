@@ -12,7 +12,7 @@
 <button
    on:click={handleClick}
    type="button"
-   class="flex justify-center items-center px-4 py-2 bg-red-500 text-white font-bold rounded-lg shadow-lg hover:bg-red-600 hover:shadow-sm transition-shadow duration-300"
+   class="flex justify-center items-center px-4 py-2 bg-red-500 text-white font-bold rounded-lg shadow-lg border-0 hover:bg-red-600 hover:shadow-sm transition-shadow duration-300"
    {disabled}
 >
    <Fa icon={faBackspace} class="pr-2" /> kembali
