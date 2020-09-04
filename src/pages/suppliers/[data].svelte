@@ -92,9 +92,18 @@
    <div class="w-full md:pt-2 md:px-6 scrolling-auto">
       <div class="w-full md:w-10/12 xl:w-8/12 md:pr-4 md:border-r border-gray-300">
          <form class="w-full">
-            <div class="control md:w-2/3">
-               <Field bind:value={form.name} />
-               <label>nama pemasok *</label>
+            <div class="p-4">
+               <h5 class="text-red-500 leading-relaxed">* kode pemasok tidak dapat diubah setelah dibuat.</h5>
+            </div>
+            <div class="flex flex-col md:flex-row">
+               <div class="control md:w-1/3">
+                  <Field bind:value={form.code} disabled={id} />
+                  <label>kode pemasok *</label>
+               </div>
+               <div class="control md:w-2/3">
+                  <Field bind:value={form.name} />
+                  <label>nama pemasok *</label>
+               </div>
             </div>
             <div class="flex flex-col md:flex-row">
                <div class="control md:w-1/2">

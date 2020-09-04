@@ -2,6 +2,7 @@
    import { onMount } from "svelte"
    import { fade } from "svelte/transition"
    import { goto } from "@sveltech/routify"
+   import moment from "moment"
 
    import { appname, menu } from "../../stores"
    import { init, ppo, branches } from "../../stores/data"
@@ -15,11 +16,11 @@
       datas: ppo,
       countLabel: "pre order",
       heads: [
-         { key: "date", label: "tanggal" },
+         { key: "date", label: "tanggal", render: x => moment(x.date).format("DD MMM YYYY") },
          { key: "no", label: "nomor" },
-         { key: "noref", label: "nomor referensi" },
+         { key: "ref", label: "nomor referensi" },
          { key: "description", label: "keterangan", render: x => x.description !== null && x.description !== "" ? x.description : "-" },
-         { key: "active", label: "aktif", render: x => (x.active === 1 ? "Ya" : "Tidak") },
+         { key: "status", label: "aktif", render: x => (x.status === 1 ? "belum selesai" : (x.status === 2 ? "sebagian" : "selesai")) },
       ],
       actions: [
          {
@@ -37,8 +38,8 @@
             icon: "trash-alt",
             iconClass: "text-red-500",
             execute: data => {
-               const label = data.name
-               const isConfirm = window.confirm(`Apakah yakin menghapus pengguna "${label}" ?`)
+               const label = data.no
+               const isConfirm = window.confirm(`Apakah yakin menghapus pre order pembelian "${label}" ?`)
                if (isConfirm) {
                   fetch.del(`/ppo/${data.id}`, { label }).then(res => {
                      if (res.success) {

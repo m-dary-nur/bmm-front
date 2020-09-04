@@ -17,9 +17,15 @@ export const items = writable([])
 export const itemgroups = writable([])
 
 export const ppo = writable([])
+export const ppodet = writable([])
 export const po = writable([])
+export const podet = writable([])
 export const pi = writable([])
+export const pidet = writable([])
+export const pd = writable([])
+export const pddet = writable([])
 export const pr = writable([])
+export const prdet = writable([])
 
 const dataStore = {
    branches,
@@ -34,15 +40,28 @@ const dataStore = {
    itemgroups,
 
    ppo,
+   ppodet,
    po,
+   podet,
    pi,
+   pidet,
+   pd,
+   pddet,
    pr,
+   prdet,
 }
 
-export const getDataById = (table, id) => {
+export const getDataById = (table, id, column = "id") => {
    const datas = get(dataStore[table])
-   const data = datas.find(x => x.id === parseInt(id))
-   if (!data) console.log("[getDataById] data not found")
+   const data = datas.find(x => x[column] === parseInt(id))
+   if (!data) console.log("[getDataById] data not found", table, 'with', id, column, 'result:', data)
+   return data
+}
+
+export const getDataArrayById = (table, id, column = "id") => {
+   const datas = get(dataStore[table])
+   const data = datas.filter(x => x[column] === parseInt(id))
+   if (!data) console.log("[getDataArrayById] data not found", table, 'with', column, id, 'result:', data)
    return data
 }
 

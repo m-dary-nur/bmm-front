@@ -3,9 +3,11 @@
 	import { fade } from "svelte/transition"
    import { goto } from "@sveltech/routify"
    import moment from "moment"
+   import Fa from "svelte-fa"
+   import { faTrash } from "@fortawesome/pro-regular-svg-icons"
 
 	import { appname, menu, branch } from "../../stores"
-   import { init, getDataById, ppo, items } from "../../stores/data"
+   import { init, getDataById, getDataArrayById, ppo, items } from "../../stores/data"
 
    import diff from "../../helpers/diff"
    import fetch from "../../helpers/fetch"
@@ -14,6 +16,7 @@
 	import { toast } from "../../components/toast"
 	import ButtonBack from "../../components/buttons/Back.svelte"
 	import ButtonWarning from "../../components/buttons/Warning.svelte"
+	import ButtonDanger from "../../components/buttons/Danger.svelte"
 	import Button from "../../components/buttons/Primary.svelte"
 	import Field from "../../components/inputs/Field.svelte"
 	import Number from "../../components/inputs/Number.svelte"
@@ -32,22 +35,29 @@
       date: today,
       ref: "",
 		description: "",
-		active: true,
    }
    const initialStateDet = {
       itemId: "",
       dateRequired: today,
       qty: 1,
+      ratio: 1,
       unit: "",
       description: "",
    }
    const heads = [
+      { key: "dateRequired", label: "tgl dibutuhkan", render: x => moment(x.dateRequired).format("DD MMM YYYY")},
       { key: "itemId", label: "produk", render: x => {
          const o = $items.find(y => y.id === x.itemId)
-         if (o) return `${o.barcode} - ${o.name} (${o.barcodeSupplier})`
+         if (o) return `${o.barcodeSupplier ? '<i>('+o.barcodeSupplier+')</i> ' : ''}<b>${o.barcode}</b> - ${o.name}`
          return "-"
       }},
-      { key: "unit", label: "jumlah", render: x => `${x.qty} ${x.unit}` },
+      { key: "unit", label: "jumlah", render: x => {
+         if (x.ratio === 1) {
+            return `${x.qty} ${x.unit}`
+         }
+         const o = $items.find(y => y.id === x.itemId)
+         return `${x.qty} ${x.unit} ${x.ratio > 1 ? '(± '+x.qty*x.ratio+' '+o.unit1+')' : '' }`
+      } },
    ]
    
 	let form = {...initialState}
@@ -55,6 +65,7 @@
    let detail = []
    let loading = false
    let units = []
+   let itemsFiltered = $items
    
    
    const allow = (key, action) => $menu.findIndex(x => x.key === key && x.action === action) !== -1
@@ -68,11 +79,18 @@
             if (item[`unit${i}`] === undefined || item[`unit${i}`] === "" || item[`unit${i}`] === null) {
                break
             }
-            newUnits = [...newUnits, {unit: item[`unit${i}`]}]
+            newUnits = [...newUnits, {unit: item[`unit${i}`], ratio: item[`ratio${i}`]}]
          }
          units = newUnits
-         formdet.unit = units[0].unit
+         const { unit, ratio } = units[0]
+         formdet.unit = unit
+         formdet.ratio = ratio
       }
+   }
+
+   const unitChanged = () => {
+      const o = units.find(x => x.unit === formdet.unit)
+      formdet.ratio = o.ratio
    }
 
    const addDetail = () => {
@@ -83,13 +101,19 @@
       }
    }
 
+   const removeDetail = i => {
+      detail = detail.filter((x, xi) => xi !== i)
+   } 
+
    const insert = () => {
       loading = true
-      const log = JSON.stringify(form)      
-      fetch.post(`/ppo`, { ...form, log }).then(res => {
+      const log = JSON.stringify({...form, detail })      
+      fetch.post(`/ppo`, { ...form, detail, log }).then(res => {
          loading = false
          if (res.success) {
             form = {...initialState}
+            formdet = {...initialStateDet}
+            detail = []
             toast.success("Berhasil dibuat",res.message)
          } else {
             toast.danger("Gagal",res.message)
@@ -100,8 +124,8 @@
    const update = () => {
       loading = true
       const oldData = $ppo.find(x => x.id === form.id)
-      const log = JSON.stringify(diff(form, oldData))
-      fetch.put(`/ppo`, { ...form, log }).then(res => {
+      const log = JSON.stringify(diff({...form, detail}, oldData))
+      fetch.put(`/ppo`, { ...form, detail, log }).then(res => {
          loading = false
          if (res.success) {            
             toast.success("Berhasil diubah",res.message)
@@ -112,14 +136,21 @@
       })
    }
 
+   $: if (detail) {
+      itemsFiltered = $items.filter(x => detail.findIndex(y => y.itemId === x.id) === -1)
+   }
+
 	onMount(() => {
       init("items")
-      init("ppo").then(() => {
+      init("ppo")
+      init("ppodet").then(() => {
          if (action === "edit") {
             const data = getDataById("ppo", id)
+            const datadet = getDataArrayById("ppodet", id, "poId", true)
             form = { ...form, ...data }
-         } else {
-            form = { ...form, id: $branch.id }
+            if (datadet.length > 0) {
+               detail = datadet.map(x => ({ ...x, dateRequired: moment(x.dateRequired).format("YYYY-MM-DD")})).sort((x, y) => x.id - y.id)
+            }
          }
       })
    })
@@ -155,7 +186,7 @@
             <h4 class="mt-6 text-gray-500 text-md font-bold">Detail</h4>
             <div class="flex flex-col md:flex-row">
                <div class="control md:w-4/6">
-                  <Select bind:value={formdet.itemId} items={$items} itemId="id" itemLabel={x => `${x.barcode} - ${x.name} (${x.barcodeSupplier})`} on:change={itemIdChanged} searchable />
+                  <Select bind:value={formdet.itemId} items={itemsFiltered} itemId="id" itemLabel={x => `${x.barcodeSupplier ? '('+x.barcodeSupplier+') ':''}${x.barcode} - ${x.name}`} on:change={itemIdChanged} searchable />
                   <label>produk *</label>
                </div> 
                <div class="control md:w-2/6">
@@ -169,8 +200,14 @@
                   <label>jumlah *</label>
                </div> 
                <div class="control md:w-2/6">
-                  <Select bind:value={formdet.unit} items={units} itemId="unit" itemLabel="unit" />
+                  <Select bind:value={formdet.unit} items={units} on:change={unitChanged} itemId="unit" itemLabel="unit" />
                   <label>satuan *</label>
+               </div>
+            </div>
+            <div class="flex flex-col md:flex-row">
+               <div class="control md:w-4/6">
+                  <Textarea bind:value={formdet.description} />
+                  <label>deskripsi produk</label>
                </div>
                <div class="flex justify-center items-end pb-2 md:w-2/6">
                   <ButtonWarning 
@@ -202,6 +239,13 @@
                               {@html head.render ? head.render(data) : data[head.key]
                            }</td>
                         {/each}
+                        <td class="w-2 px-4 py-2 border-l border-r border-t border-gray-200 min-w-42 md:min-w-0">
+                           <ButtonDanger 
+                              on:click={() => removeDetail(i)}
+                           >
+                              <Fa icon={faTrash} class="my-1" />
+                           </ButtonDanger>  
+                        </td>
                      </tr>
                   {/each}
                   {:else}
@@ -216,10 +260,10 @@
                   loading={loading}
                   on:click={action === "edit" ? update : insert}
                   disabled={
-                     !form.branchId ||
-                     form.branchId === "" ||
-                     !form.name ||
-                     form.name === ""
+                     !form.date ||
+                     form.date === "" ||
+                     !detail.length ||
+                     detail.length === 0
                   }
                >
                   {action === "edit" ? "Ubah" : "Buat"}
