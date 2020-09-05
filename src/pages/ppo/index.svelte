@@ -5,7 +5,7 @@
    import moment from "moment"
 
    import { appname, menu } from "../../stores"
-   import { init, ppo, branches } from "../../stores/data"
+   import { init, ppo } from "../../stores/data"
    import fetch from "../../helpers/fetch"
    import PageUnauthorized from "../../components/PageUnauthorized.svelte"
    import ButtonAdd from "../../components/buttons/Add.svelte"
@@ -28,8 +28,18 @@
             action: "edit",
             label: "ubah",
             icon: "pencil-alt",
-            iconClass: "text-yellow-500",            
+            iconClass: "text-yellow-500",     
+            disabled: x => x.status > 0,       
             execute: data => $goto(`/ppo/${data.id}`),
+         },
+         {
+            key: "ppo",
+            action: "detail",
+            label: "detail",
+            icon: "file-alt",
+            iconClass: "text-blue-500",     
+            disabled: x => x.status > 0,       
+            execute: data => $goto(`/ppo/detail/${data.id}`),
          },
          {
             key: "ppo",
@@ -37,6 +47,7 @@
             label: "hapus",
             icon: "trash-alt",
             iconClass: "text-red-500",
+            disabled: x => x.status > 0,
             execute: data => {
                const label = data.no
                const isConfirm = window.confirm(`Apakah yakin menghapus pre order pembelian "${label}" ?`)

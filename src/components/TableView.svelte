@@ -1,6 +1,6 @@
 <script>
     import Fa from "svelte-fa"
-    import { faPencilAlt, faTrashAlt } from "@fortawesome/pro-regular-svg-icons"
+    import { faPencilAlt, faFileAlt, faTrashAlt } from "@fortawesome/pro-regular-svg-icons"
     import VirtualList from "@sveltejs/svelte-virtual-list"
     import { menu } from "../stores"
     import highlight from "../helpers/highlight"
@@ -15,6 +15,7 @@
  
     const icons = {
        "pencil-alt": faPencilAlt, 
+       "file-alt": faFileAlt,
        "trash-alt": faTrashAlt,
     }
     let search = ""

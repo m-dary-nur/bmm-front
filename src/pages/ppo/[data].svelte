@@ -6,7 +6,7 @@
    import Fa from "svelte-fa"
    import { faTrash } from "@fortawesome/pro-regular-svg-icons"
 
-	import { appname, menu, branch } from "../../stores"
+	import { appname, menu } from "../../stores"
    import { init, getDataById, getDataArrayById, ppo, items } from "../../stores/data"
 
    import diff from "../../helpers/diff"
@@ -45,7 +45,7 @@
       description: "",
    }
    const heads = [
-      { key: "dateRequired", label: "tgl dibutuhkan", render: x => moment(x.dateRequired).format("DD MMM YYYY")},
+      { key: "dateRequired", label: "tgl. dibutuhkan", render: x => moment(x.dateRequired).format("DD MMM YYYY")},
       { key: "itemId", label: "produk", render: x => {
          const o = $items.find(y => y.id === x.itemId)
          if (o) return `${o.barcodeSupplier ? '<i>('+o.barcodeSupplier+')</i> ' : ''}<b>${o.barcode}</b> - ${o.name}`
@@ -146,7 +146,7 @@
       init("ppodet").then(() => {
          if (action === "edit") {
             const data = getDataById("ppo", id)
-            const datadet = getDataArrayById("ppodet", id, "poId", true)
+            const datadet = getDataArrayById("ppodet", id, "ppoId", true)
             form = { ...form, ...data }
             if (datadet.length > 0) {
                detail = datadet.map(x => ({ ...x, dateRequired: moment(x.dateRequired).format("YYYY-MM-DD")})).sort((x, y) => x.id - y.id)
@@ -191,7 +191,7 @@
                </div> 
                <div class="control md:w-2/6">
                   <Field type="date" bind:value={formdet.dateRequired} />
-                  <label>tgl dibutuhkan *</label>
+                  <label>tgl. dibutuhkan *</label>
                </div>                
             </div>
             <div class="flex flex-col md:flex-row">

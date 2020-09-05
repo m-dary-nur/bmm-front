@@ -4,7 +4,7 @@
    import { goto } from "@sveltech/routify"
 
    import { appname, menu } from "../../stores"
-   import { init, itemgroups, taxaccs, itemtypes } from "../../stores/data"
+   import { init, itemgroups, itemtypes } from "../../stores/data"
    import fetch from "../../helpers/fetch"
    import PageUnauthorized from "../../components/PageUnauthorized.svelte"
    import ButtonAdd from "../../components/buttons/Add.svelte"

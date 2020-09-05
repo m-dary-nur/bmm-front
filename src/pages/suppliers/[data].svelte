@@ -3,8 +3,8 @@
 	import { fade } from "svelte/transition"
    import { goto } from "@sveltech/routify"
 
-	import { appname, menu, branch } from "../../stores"
-   import { init, getDataById, suppliers, branches } from "../../stores/data"
+	import { appname, menu } from "../../stores"
+   import { init, getDataById, suppliers } from "../../stores/data"
 
    import diff from "../../helpers/diff"
    import fetch from "../../helpers/fetch"
