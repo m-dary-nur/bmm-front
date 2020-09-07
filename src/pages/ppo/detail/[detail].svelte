@@ -18,7 +18,7 @@
       { key: "dateRequired", label: "tgl. dibutuhkan", render: x => moment(x.dateRequired).format("DD MMM YYYY")},
       { key: "itemId", label: "produk", render: x => {
          const o = $items.find(y => y.id === x.itemId)
-         if (o) return `${o.barcodeSupplier ? '<i>('+o.barcodeSupplier+')</i> ' : ''}${o.barcode} - ${o.name}`
+         if (o) return `${o.barcodeGlobal ? '('+o.barcodeGlobal+') ' : ''}${o.barcode} - ${o.name}`
          return "-"
       }},
       { key: "unit", label: "jumlah", align: "right", render: x => {

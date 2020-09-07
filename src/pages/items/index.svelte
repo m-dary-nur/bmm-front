@@ -17,7 +17,7 @@
       heads: [
          { key: "code", label: "kode produk" },
          { key: "barcode", label: "barcode produk", render: x => x.barcode !== null && x.barcode !== "" ? x.barcode : "-" },
-         { key: "barcodeSupplier", label: "barcode nasional", render: x => x.barcodeSupplier !== null && x.barcodeSupplier !== "" ? x.barcodeSupplier : "-" },
+         { key: "barcodeGlobal", label: "barcode nasional", render: x => x.barcodeGlobal !== null && x.barcodeGlobal !== "" ? x.barcodeGlobal : "-" },
          { key: "name", label: "nama produk" },
          { key: "description", label: "deskripsi", render: x => x.description !== null && x.description !== "" ? x.description : "-" },
          { key: "active", label: "aktif", render: x => (x.active === 1 ? "Ya" : "Tidak") },

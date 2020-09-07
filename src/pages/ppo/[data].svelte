@@ -48,7 +48,7 @@
       { key: "dateRequired", label: "tgl. dibutuhkan", render: x => moment(x.dateRequired).format("DD MMM YYYY")},
       { key: "itemId", label: "produk", render: x => {
          const o = $items.find(y => y.id === x.itemId)
-         if (o) return `${o.barcodeSupplier ? '<i>('+o.barcodeSupplier+')</i> ' : ''}<b>${o.barcode}</b> - ${o.name}`
+         if (o) return `${o.barcodeGlobal ? '<i>('+o.barcodeGlobal+')</i> ' : ''}<b>${o.barcode}</b> - ${o.name}`
          return "-"
       }},
       { key: "unit", label: "jumlah", render: x => {
@@ -186,7 +186,7 @@
             <h4 class="mt-6 text-gray-500 text-md font-bold">Detail</h4>
             <div class="flex flex-col md:flex-row">
                <div class="control md:w-4/6">
-                  <Select bind:value={formdet.itemId} items={itemsFiltered} itemId="id" itemLabel={x => `${x.barcodeSupplier ? '('+x.barcodeSupplier+') ':''}${x.barcode} - ${x.name}`} on:change={itemIdChanged} searchable />
+                  <Select bind:value={formdet.itemId} items={itemsFiltered} itemId="id" itemLabel={x => `${x.barcodeGlobal ? '('+x.barcodeGlobal+') ':''}${x.barcode} - ${x.name}`} on:change={itemIdChanged} searchable />
                   <label>produk *</label>
                </div> 
                <div class="control md:w-2/6">
