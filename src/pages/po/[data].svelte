@@ -294,7 +294,6 @@
                   </Button>             
                </div>
             </div>
-            {JSON.stringify(detail)}
             <table class="w-full mt-4">
                <thead>
                   <tr>
