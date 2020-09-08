@@ -90,16 +90,16 @@
             <div class="w-1/6"></div>
             <div class="flex flex-col w-2/6">
                <div class="flex justify-between">
+                  <p class="text-right font-bold">Tgl. Transaksi:</p>
+                  <p class="text-right">{moment(dataHeader.date).format("DD/MM/YYYY")}</p>
+               </div>
+               <div class="flex justify-between">
                   <p class="text-right font-bold">No. Transaksi:</p>
                   <p class="text-right">{dataHeader.no}</p>
                </div>
                <div class="flex justify-between">
                   <p class="text-right font-bold">Referensi:</p>
                   <p class="text-right">{dataHeader.ref}</p>
-               </div>
-               <div class="flex justify-between">
-                  <p class="text-right font-bold">Tgl. Transaksi:</p>
-                  <p class="text-right">{moment(dataHeader.date).format("DD/MM/YYYY")}</p>
                </div>
             </div>
          </div>

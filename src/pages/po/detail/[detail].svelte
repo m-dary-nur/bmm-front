@@ -9,6 +9,7 @@
    import { appname, branch, menu } from "../../../stores"
    import { init, getDataById, getDataArrayById, items } from "../../../stores/data"
    import PageUnauthorized from "../../../components/PageUnauthorized.svelte"   
+import thousand from "../../../helpers/thousand";
 
    export let detail
 
@@ -28,21 +29,29 @@
          const o = $items.find(y => y.id === x.itemId)
          return `${x.qty} ${x.unit} ${x.ratio > 1 ? '(± '+x.qty*x.ratio+' '+o.unit1+')' : '' }`
       } },
+      { key: "price", label: "harga", align: "right", render: x => thousand(x.price)},
+      { key: "total", label: "total", align: "right", render: x => thousand(x.total)},
    ]
 
    let dataHeader = {}
    let dataDetail = []
+   let supplier
 
    const allow = (key, action) => $menu.findIndex(x => x.key === key && x.action === action) !== -1   
 
-   $: totalItem = dataDetail.length
+   $: grandTotal = dataDetail.reduce((x, y) => x = x + y.total, 0)
    
    onMount(() => {
+      init("suppliers")
       init("items")
       init("po")
       init("podet").then(() => {
          const data1 = getDataById("po", id)
          const data2 = getDataArrayById("podet", id, "poId", true)
+         if (data1) {
+            console.log(getDataById("suppliers", data1.supplierId))
+            supplier = getDataById("suppliers", data1.supplierId)
+         }
          dataHeader = {...dataHeader, ...data1}
          dataDetail = [...dataDetail, ...data2]
       })
@@ -87,9 +96,16 @@
          </div>
 
          <div class="flex justify-between items-start mb-8">
-            <div class="flex flex-col w-3/6 mr-10"></div>
+            <div class="flex flex-col w-3/6 mr-10">
+               <div class="border-b border-gray-500 text-left font-bold pb-1 mb-1">Alamat Pengiriman</div>
+               <p class="text-left">{dataHeader.address}</p>
+            </div>
             <div class="w-1/6"></div>
             <div class="flex flex-col w-2/6">
+               <div class="flex justify-between">
+                  <p class="text-right font-bold">Tgl. Transaksi:</p>
+                  <p class="text-right">{moment(dataHeader.date).format("DD/MM/YYYY")}</p>
+               </div>
                <div class="flex justify-between">
                   <p class="text-right font-bold">No. Transaksi:</p>
                   <p class="text-right">{dataHeader.no}</p>
@@ -99,9 +115,9 @@
                   <p class="text-right">{dataHeader.ref}</p>
                </div>
                <div class="flex justify-between">
-                  <p class="text-right font-bold">Tgl. Transaksi:</p>
-                  <p class="text-right">{moment(dataHeader.date).format("DD/MM/YYYY")}</p>
-               </div>
+                  <p class="text-right font-bold">Pemasok:</p>
+                  <p class="text-right">{supplier ? supplier.name : "-"}</p>
+               </div>               
             </div>
          </div>
 
@@ -141,8 +157,8 @@
             <div class="w-1/6"></div>
             <div class="flex flex-col w-2/6 px-4">
                <div class="flex justify-between">
-                  <p class="text-right font-bold">JUMLAH PRODUK</p>
-                  <p class="text-right border-b-2 bordr-gray-500">{totalItem}</p>
+                  <p class="text-right font-bold">TOTAL</p>
+                  <p class="text-right border-b border-gray-500">{thousand(grandTotal)}</p>
                </div>
             </div>
          </div>

@@ -211,7 +211,7 @@
             <div class="flex flex-col md:flex-row">
                <div class="control md:w-4/6">
                   <Textarea bind:value={formdet.description} />
-                  <label>deskripsi produk</label>
+                  <label>deskripsi lainnya</label>
                </div>
                <div class="flex justify-center items-end pb-2 md:w-2/6">
                   <Button 

@@ -1,7 +1,7 @@
 <script>
    import { createEventDispatcher } from "svelte"   
    import Fa from "svelte-fa"
-   import { faSpinnerThird, faReply, faPlus, faTrashAlt, faPencilAlt } from "@fortawesome/pro-regular-svg-icons"
+   import { faSpinnerThird, faReply, faPlus, faTrashAlt, faPencilAlt, faSave } from "@fortawesome/pro-regular-svg-icons"
 
    export let loading = false   
    export let disabled = false
@@ -17,6 +17,7 @@
        "reply": faReply,
        "trash-alt": faTrashAlt,
        "pencil-alt": faPencilAlt,
+       "save": faSave,
    }
 
    const dispatch = createEventDispatcher()
