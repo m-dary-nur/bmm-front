@@ -3,14 +3,13 @@
 	import { fade } from "svelte/transition"
    import { goto } from "@sveltech/routify"
    import moment from "moment"
-   import Fa from "svelte-fa"
-   import { faTrash } from "@fortawesome/pro-regular-svg-icons"
 
 	import { appname, menu } from "../../stores"
-   import { init, getDataById, getDataArrayById, ppo, items } from "../../stores/data"
+   import { init, getDataById, getDataArrayById, ppo, ppodet, po, suppliers, items } from "../../stores/data"
 
    import diff from "../../helpers/diff"
    import fetch from "../../helpers/fetch"
+   import thousand from "../../helpers/thousand"
 
    import PageUnauthorized from "../../components/PageUnauthorized.svelte"
 	import { toast } from "../../components/toast"
@@ -19,6 +18,7 @@
 	import FieldNumber from "../../components/inputs/FieldNumber.svelte"
 	import Textarea from "../../components/inputs/Textarea.svelte"
 	import Select from "../../components/inputs/Select.svelte"
+	import Switch from "../../components/inputs/Switch.svelte"
 
    
    export let data
@@ -28,8 +28,11 @@
    const action = data === "new" ? "add" : "edit"
 	const initialState = {
       id: "",
+      ppoId: "",
+      supplierId: "",
       date: today,
       ref: "",
+      address: "",
 		description: "",
    }
    const initialStateDet = {
@@ -38,6 +41,7 @@
       qty: 1,
       ratio: 1,
       unit: "",
+      price: 0,
       description: "",
    }
    const heads = [
@@ -54,10 +58,13 @@
          const o = $items.find(y => y.id === x.itemId)
          return `${x.qty} ${x.unit} ${x.ratio > 1 ? '(± '+x.qty*x.ratio+' '+o.unit1+')' : '' }`
       } },
+      { key: "price", label: "harga", render: x => thousand(x.price)},
+      { key: "total", label: "total", render: x => thousand(x.price * x.qty)},
    ]
    
 	let form = {...initialState}
    let formdet = {...initialStateDet}
+   let usingPpo = false
    let detail = []
    let loading = false
    let units = []
@@ -65,7 +72,7 @@
    
    
    const allow = (key, action) => $menu.findIndex(x => x.key === key && x.action === action) !== -1
-   
+
    const itemIdChanged = () => {
       const item = $items.find(x => x.id === formdet.itemId)
       units = []
@@ -97,14 +104,22 @@
       }
    }
 
+   const editDetail = () => {}
+
    const removeDetail = i => {
-      detail = detail.filter((x, xi) => xi !== i)
+      detail = detail.filter((_, xi) => xi !== i)
    } 
+
+   const addDetailFromRef = () => {
+      const detailPpo = $ppodet.filter(x => x.ppoId === form.ppoId)
+      console.log(detailPpo)
+      detail = [...detail, ...detailPpo]
+   }
 
    const insert = () => {
       loading = true
       const log = JSON.stringify({...form, detail })      
-      fetch.post(`/ppo`, { ...form, detail, log }).then(res => {
+      fetch.post(`/po`, { ...form, detail, log }).then(res => {
          loading = false
          if (res.success) {
             form = {...initialState}
@@ -119,17 +134,22 @@
 
    const update = () => {
       loading = true
-      const oldData = $ppo.find(x => x.id === form.id)
+      const oldData = $po.find(x => x.id === form.id)
       const log = JSON.stringify(diff({...form, detail}, oldData))
-      fetch.put(`/ppo`, { ...form, detail, log }).then(res => {
+      fetch.put(`/po`, { ...form, detail, log }).then(res => {
          loading = false
          if (res.success) {            
             toast.success("Berhasil diubah",res.message)
-            $goto("/ppo")
+            $goto("/po")
          } else {
             toast.danger("Gagal",res.message)
          }
       })
+   }
+
+   $: if (!usingPpo) {
+      form.ppoId = ""
+      form.detail = []
    }
 
    $: if (detail) {
@@ -137,12 +157,15 @@
    }
 
 	onMount(() => {
+      init("suppliers")
       init("items")
       init("ppo")
-      init("ppodet").then(() => {
+      init("ppodet")
+      init("po")
+      init("podet").then(() => {
          if (action === "edit") {
-            const data = getDataById("ppo", id)
-            const datadet = getDataArrayById("ppodet", id, "ppoId", true)
+            const data = getDataById("po", id)
+            const datadet = getDataArrayById("podet", id, "poId", true)
             form = { ...form, ...data }
             if (datadet.length > 0) {
                detail = datadet.map(x => ({ ...x, dateRequired: moment(x.dateRequired).format("YYYY-MM-DD")})).sort((x, y) => x.id - y.id)
@@ -153,21 +176,21 @@
 </script>
 
 <svelte:head>
-	<title>{action === "edit" ? "Ubah" : "Buat"} Pre Order Pembelian | {$appname}</title>
+	<title>{action === "edit" ? "Ubah" : "Buat"} Order Pembelian | {$appname}</title>
 </svelte:head>
 
-{#if $menu && allow("ppo", action)}
+{#if $menu && allow("po", action)}
 <div in:fade class="pt-2 md:pt-8">
    <div class="flex justify-between items-center px-4 pb-4 md:px-8 border-b border-gray-200 md:border-transparent">
-      <h3 class="text-theme text-lg font-bold">{action === "edit" ? "Ubah" : "Buat"} Pre Order Pembelian</h3>
+      <h3 class="text-theme text-lg font-bold">{action === "edit" ? "Ubah" : "Buat"} Order Pembelian</h3>
       <Button 
          circle
          iconOnly
          icon="reply"
          color="red"
          textColor="white"
-         on:click={() => $goto("/ppo")} 
-         disabled={$menu && !allow("ppo", "view")} 
+         on:click={() => $goto("/po")} 
+         disabled={$menu && !allow("po", "view")} 
       />
    </div> 
    <div class="w-full md:pt-2 md:px-6 scrolling-auto">
@@ -183,6 +206,33 @@
                   <label>referensi</label>
                </div>                
             </div>
+            <div class="control md:w-1/3">
+               <Switch bind:checked={usingPpo} label="referensi pre order pembelian" disabled={detail.length > 0 || id} />
+            </div>
+            {#if usingPpo}
+            <div class="flex flex-col md:flex-row">
+               <div class="control md:w-1/2">
+                  <Select bind:value={form.ppoId} items={$ppo} itemId="id" itemLabel={x => `${moment(x.date).format("DD MMM YYYY")} - ${x.no} (${x.ref})`} searchable disabled={detail.length > 0 || id} />
+                  <label>pre order pembelian</label>
+               </div> 
+               <div class="flex justify-center items-end pb-2">
+                  <Button 
+                     color="green"
+                     textColor="white"
+                     disabled={detail.length > 0 || id || !form.ppoId || form.ppoId === ""}
+                     on:click={addDetailFromRef}
+                  >
+                     tambah
+                  </Button>   
+               </div>
+            </div> 
+            {/if}
+            <div class="flex flex-col md:flex-row"> 
+               <div class="control md:w-2/3">
+                  <Select bind:value={form.supplierId} items={$suppliers} itemId="id" itemLabel={x => `${x.code} - ${x.name}`} searchable />
+                  <label>pemasok *</label>
+               </div> 
+            </div> 
             <div class="control">
                <Textarea bind:value={form.description} />
                <label>deskripsi</label>
@@ -207,6 +257,10 @@
                   <Select bind:value={formdet.unit} items={units} on:change={unitChanged} itemId="unit" itemLabel="unit" />
                   <label>satuan *</label>
                </div>
+               <div class="control md:w-2/6">
+                  <FieldNumber bind:value={formdet.price} />
+                  <label>harga *</label>
+               </div> 
             </div>
             <div class="flex flex-col md:flex-row">
                <div class="control md:w-4/6">
@@ -221,7 +275,8 @@
                         !formdet.itemId || formdet.itemId === "" ||
                         !formdet.dateRequired || formdet.dateRequired === "" ||
                         !formdet.qty || formdet.qty === "" ||
-                        !formdet.unit || formdet.unit === ""
+                        !formdet.unit || formdet.unit === "" ||
+                        !formdet.price || formdet.price === ""
                      }
                      on:click={addDetail}
                   >
@@ -251,7 +306,15 @@
                               {@html head.render ? head.render(data) : data[head.key]
                            }</td>
                         {/each}
-                        <td class="w-2 px-4 py-2 border-l border-r border-t border-gray-200 min-w-42 md:min-w-0">
+                        <td class="flex justify-between min-w-0 md:min-w-0 px-4 py-2 border-l border-r border-t border-gray-200">
+                           <Button
+                              circle
+                              iconOnly
+                              icon="pencil-alt"
+                              color="yellow"
+                              textColor="white"
+                              on:click={() => editDetail(i)}
+                           />
                            <Button
                               circle
                               iconOnly
@@ -265,7 +328,7 @@
                   {/each}
                   {:else}
                      <tr>
-                        <td colspan={heads.length + 2} class="text-center px-4 py-2 border-l border-r border-t border-gray-200 min-w-42 md:min-w-0">Tidak ada data.</td>
+                        <td colspan={heads.length + 2} class="text-center px-4 py-2 border-l border-r border-t border-gray-200">Tidak ada data.</td>
                      </tr>
                   {/if}
                </tbody>
@@ -278,6 +341,7 @@
                   on:click={action === "edit" ? update : insert}
                   disabled={
                      !form.date || form.date === "" ||
+                     !form.supplierId || form.supplierId === "" ||
                      !detail.length || detail.length === 0
                   }
                >

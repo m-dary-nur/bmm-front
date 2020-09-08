@@ -11,8 +11,7 @@
 
    import PageUnauthorized from "../../components/PageUnauthorized.svelte"
 	import { toast } from "../../components/toast"
-	import ButtonBack from "../../components/buttons/Back.svelte"
-	import Button from "../../components/buttons/Primary.svelte"
+	import Button from "../../components/buttons/Button.svelte"
 	import Field from "../../components/inputs/Field.svelte"
 	import Textarea from "../../components/inputs/Textarea.svelte"
 	import Select from "../../components/inputs/Select.svelte"
@@ -87,7 +86,15 @@
 <div in:fade class="pt-2 md:pt-8">
    <div class="flex justify-between items-center px-4 pb-4 md:px-8 border-b border-gray-200 md:border-transparent">
       <h3 class="text-theme text-lg font-bold">{action === "edit" ? "Ubah" : "Buat"} Setting Pajak</h3>
-      <ButtonBack on:click={() => $goto("/taxconfs")} disabled={$menu && !allow("taxconfs", "view")} />
+      <Button 
+         circle
+         iconOnly
+         icon="reply"
+         color="red"
+         textColor="white"
+         on:click={() => $goto("/taxconfs")} 
+         disabled={$menu && !allow("taxconfs", "view")} 
+      />
    </div> 
    <div class="w-full md:pt-2 md:px-6 scrolling-auto">
       <div class="w-full md:w-10/12 xl:w-8/12 md:pr-4 md:border-r border-gray-300">
@@ -117,6 +124,8 @@
             <div class="sticky bottom-0 bg-white flex justify-between items-center p-2 mt-4 border-t border-gray-300 shadow-bottom-bar">
                <Switch bind:checked={form.active} label="aktifkan setting pajak ini" />
                <Button
+                  color="theme"
+                  textColor="white"
                   loading={loading}
                   on:click={action === "edit" ? update : insert}
                   disabled={

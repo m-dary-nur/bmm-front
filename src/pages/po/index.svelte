@@ -2,9 +2,10 @@
    import { onMount } from "svelte"
    import { fade } from "svelte/transition"
    import { goto } from "@sveltech/routify"
+   import moment from "moment"
 
    import { appname, menu } from "../../stores"
-   import { init, itemgroups, itemtypes } from "../../stores/data"
+   import { init, po, suppliers } from "../../stores/data"
    import fetch from "../../helpers/fetch"
    import PageUnauthorized from "../../components/PageUnauthorized.svelte"
    import Button from "../../components/buttons/Button.svelte"
@@ -12,37 +13,51 @@
    import { toast } from "../../components/toast"      
 
    const options = {
-      datas: itemgroups,
-      countLabel: "grup",
+      datas: po,
+      countLabel: "order",
       heads: [
-         { key: "name", label: "nama grup produk" },
-         { key: "itemTypeId", label: "tipe grup produk", render: x => {
-            const o = $itemtypes.find(y => y.id === x.itemTypeId)
+         { key: "date", label: "tanggal", render: x => moment(x.date).format("DD MMM YYYY") },
+         { key: "no", label: "nomor" },
+         { key: "ref", label: "referensi" },
+         { key: "supplierId", label: "Pemasok", render: x => {
+            const o = $suppliers.find(y => y.id === x.supplierId)
             if (o) return o.name
-            return ""
+            return "-"
          }},
-         { key: "active", label: "aktif", render: x => (x.active === 1 ? "Ya" : "Tidak") },
+         { key: "description", label: "keterangan", render: x => x.description !== null && x.description !== "" ? x.description : "-" },
+         { key: "status", label: "status", render: x => (x.status === 1 ? "belum selesai" : (x.status === 2 ? "sebagian" : "selesai")) },
       ],
       actions: [
          {
-            key: "itemgroups",
+            key: "po",
             action: "edit",
             label: "ubah",
             icon: "pencil-alt",
-            iconClass: "text-yellow-500",            
-            execute: data => $goto(`/itemgroups/${data.id}`),
+            iconClass: "text-yellow-500",     
+            disabled: x => x.status > 0,       
+            execute: data => $goto(`/po/${data.id}`),
          },
          {
-            key: "itemgroups",
+            key: "po",
+            action: "detail",
+            label: "detail",
+            icon: "file-alt",
+            iconClass: "text-blue-500",     
+            disabled: x => x.status > 0,       
+            execute: data => $goto(`/po/detail/${data.id}`),
+         },
+         {
+            key: "po",
             action: "delete",
             label: "hapus",
             icon: "trash-alt",
             iconClass: "text-red-500",
+            disabled: x => x.status > 0,
             execute: data => {
-               const label = data.name
-               const isConfirm = window.confirm(`Apakah yakin menghapus pengguna "${label}" ?`)
+               const label = data.no
+               const isConfirm = window.confirm(`Apakah yakin menghapus pre order pembelian "${label}" ?`)
                if (isConfirm) {
-                  fetch.del(`/itemgroups/${data.id}`, { label }).then(res => {
+                  fetch.del(`/po/${data.id}`, { label }).then(res => {
                      if (res.success) {
                         toast.success("Berhasil dihapus", res.message)
                      } else {
@@ -59,28 +74,26 @@
 
 
    onMount(() => {
-      init("taxaccs")
-      init("itemtypes")
-      init("itemgroups")
+      init("po")
    })
 </script>
 
 <svelte:head>
-	<title>Grup Produk | {$appname}</title>
+	<title>Order Pembelian | {$appname}</title>
 </svelte:head>
 
-{#if $menu && allow("itemgroups", "view")}
+{#if $menu && allow("po", "view")}
 <div in:fade class="pt-2 md:pt-8">
    <div class="flex justify-between items-center px-4 md:px-8 ">
-      <h3 class="text-theme text-lg font-bold">Grup Produk</h3>
+      <h3 class="text-theme text-lg font-bold">Order Pembelian</h3>
       <Button 
          circle
          iconOnly
          icon="plus"
          color="green"
          textColor="white"
-         on:click={() => $goto("/itemgroups/new")} 
-         disabled={$menu && !allow("itemgroups", "add")}
+         on:click={() => $goto("/po/new")} 
+         disabled={$menu && !allow("po", "add")}
       />
    </div>
    <div class="w-full md:px-8">

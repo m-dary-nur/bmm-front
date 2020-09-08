@@ -12,6 +12,7 @@
 
    export let detail
 
+   const today = moment().format("YYYY-MM-DD")
    const id = detail
    const heads = [
       { key: "dateRequired", label: "tgl. dibutuhkan", render: x => moment(x.dateRequired).format("DD MMM YYYY")},
@@ -38,10 +39,10 @@
    
    onMount(() => {
       init("items")
-      init("ppo")
-      init("ppodet").then(() => {
-         const data1 = getDataById("ppo", id)
-         const data2 = getDataArrayById("ppodet", id, "ppoId", true)
+      init("po")
+      init("podet").then(() => {
+         const data1 = getDataById("po", id)
+         const data2 = getDataArrayById("podet", id, "poId", true)
          dataHeader = {...dataHeader, ...data1}
          dataDetail = [...dataDetail, ...data2]
       })
@@ -49,15 +50,15 @@
 </script>
 
 <svelte:head>
-	<title>Detail Pre Order Pembelian | {$appname}</title>
+	<title>Detail Order Pembelian | {$appname}</title>
 </svelte:head>
 
-{#if $menu && allow("ppo", "view")}
+{#if $menu && allow("po", "view")}
 <div in:fade class="bg-gray-300 min-h-full pt-2 md:pt-8">
    <div class="relative flex justify-center items-center md:pt-6 px-2 md:px-24">
       <div class="absolute top-0 right-0 mr-16">
          <button
-            on:click={$goto("/ppo")}
+            on:click={$goto("/po")}
             type="button"
             class="flex justify-center items-center w-12 h-12 bg-red-500 text-white font-bold rounded-full shadow-lg border-0 hover:bg-red-600 hover:shadow-sm transition-shadow duration-300"
          >
@@ -80,7 +81,7 @@
                {/if}
             </div>
             <div class="flex flex-col items-end w-1/2">
-               <h1 class="text-right text-xl font-bold mb-4">Pre Order Pembelian</h1>
+               <h1 class="text-right text-xl font-bold mb-4">Order Pembelian</h1>
                <img src="/logo.png" class="w-40" alt="logo" />
             </div>
          </div>

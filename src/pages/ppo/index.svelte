@@ -8,7 +8,7 @@
    import { init, ppo } from "../../stores/data"
    import fetch from "../../helpers/fetch"
    import PageUnauthorized from "../../components/PageUnauthorized.svelte"
-   import ButtonAdd from "../../components/buttons/Add.svelte"
+   import Button from "../../components/buttons/Button.svelte"
    import TableView from "../../components/TableView.svelte"   
    import { toast } from "../../components/toast"      
 
@@ -18,9 +18,9 @@
       heads: [
          { key: "date", label: "tanggal", render: x => moment(x.date).format("DD MMM YYYY") },
          { key: "no", label: "nomor" },
-         { key: "ref", label: "nomor referensi" },
+         { key: "ref", label: "referensi" },
          { key: "description", label: "keterangan", render: x => x.description !== null && x.description !== "" ? x.description : "-" },
-         { key: "status", label: "aktif", render: x => (x.status === 1 ? "belum selesai" : (x.status === 2 ? "sebagian" : "selesai")) },
+         { key: "status", label: "status", render: x => (x.status === 1 ? "belum selesai" : (x.status === 2 ? "sebagian" : "selesai")) },
       ],
       actions: [
          {
@@ -81,7 +81,15 @@
 <div in:fade class="pt-2 md:pt-8">
    <div class="flex justify-between items-center px-4 md:px-8 ">
       <h3 class="text-theme text-lg font-bold">Pre Order Pembelian</h3>
-      <ButtonAdd on:click={() => $goto("/ppo/new")} disabled={$menu && !allow("ppo", "add")} />
+      <Button 
+         circle
+         iconOnly
+         icon="plus"
+         color="green"
+         textColor="white"
+         on:click={() => $goto("/ppo/new")} 
+         disabled={$menu && !allow("ppo", "add")}
+      />
    </div>
    <div class="w-full md:px-8">
       <TableView {...options} />

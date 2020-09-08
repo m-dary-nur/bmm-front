@@ -7,7 +7,7 @@
    import { init, suppliers } from "../../stores/data"
    import fetch from "../../helpers/fetch"
    import PageUnauthorized from "../../components/PageUnauthorized.svelte"
-   import ButtonAdd from "../../components/buttons/Add.svelte"
+   import Button from "../../components/buttons/Button.svelte"
    import TableView from "../../components/TableView.svelte"   
    import { toast } from "../../components/toast"      
 
@@ -69,7 +69,17 @@
 <div in:fade class="pt-2 md:pt-8">
    <div class="flex justify-between items-center px-4 md:px-8 ">
       <h3 class="text-theme text-lg font-bold">Pemasok</h3>
-      <ButtonAdd on:click={() => $goto("/suppliers/new")} disabled={$menu && !allow("suppliers", "add")} />
+      <Button 
+         circle
+         iconOnly
+         icon="plus"
+         color="green"
+         textColor="white"
+         on:click={() => $goto("/suppliers/new")} 
+         disabled={$menu && !allow("suppliers", "add")}
+      >
+         baru
+      </Button>
    </div>
    <div class="w-full md:px-8">
       <TableView {...options} />

@@ -86,7 +86,7 @@
                       {/each}
                       <td class="p-1 flex justify-evenly items-center border-t border-gray-200 min-w-42 md:min-w-0">
                          {#each actions as action}
-                            <button on:click={() => action.execute(data)} disabled={$menu && !allow(action.key, action.action)} class="p-3 hover:bg-theme-100 border-0 rounded-full transition-colors duration-300">
+                            <button on:click={() => action.execute(data)} disabled={$menu && !allow(action.key, action.action)} class="flex justify-center items-center w-10 h-10 hover:bg-theme-100 border-0 rounded-full transition-colors duration-300">
                                <Fa icon={icons[action.icon]} class={action.iconClass} />                           
                             </button>
                          {/each}

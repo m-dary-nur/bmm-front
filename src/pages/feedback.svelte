@@ -8,7 +8,7 @@
    import fetch from "../helpers/fetch"
 
 	import { toast } from "../components/toast"
-	import Button from "../components/buttons/Primary.svelte"
+	import Button from "../components/buttons/Button.svelte"
 	import Field from "../components/inputs/Field.svelte"
 	import Textarea from "../components/inputs/Textarea.svelte"
 	import Select from "../components/inputs/Select.svelte"
@@ -77,6 +77,8 @@
             </div>
             <div class="sticky bottom-0 bg-white flex justify-between items-center p-2 mt-4 border-t border-gray-300 shadow-bottom-bar">
                <Button
+                  color="theme"
+                  textColor="white"
                   loading={loading}
                   on:click={insert}
                   disabled={
