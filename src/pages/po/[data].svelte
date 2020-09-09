@@ -297,7 +297,6 @@
                   </Button>             
                </div>
             </div>
-            {JSON.stringify(formdet)}
             <table class="w-full mt-4">
                <thead>
                   <tr>
