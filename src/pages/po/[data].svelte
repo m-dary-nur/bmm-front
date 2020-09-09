@@ -344,14 +344,16 @@
                                  textColor="white"
                                  on:click={() => editDetail(i)}
                               />
-                              <Button
-                                 circle
-                                 iconOnly
-                                 icon="trash-alt"
-                                 color="red"
-                                 textColor="white"
-                                 on:click={() => removeDetail(i)}
-                              />                        
+                              {#if !data.ppodetId}
+                                 <Button
+                                    circle
+                                    iconOnly
+                                    icon="trash-alt"
+                                    color="red"
+                                    textColor="white"
+                                    on:click={() => removeDetail(i)}
+                                 />                        
+                              {/if}
                            {/if}
                         </td>
                      </tr>
