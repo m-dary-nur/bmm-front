@@ -7,10 +7,12 @@
    export let disabled = false
    export let color = ""
    export let textColor = "black"
+   export let className = ""
    export let iconOnly = false
    export let icon = null
    export let iconRight = null
    export let circle = false
+   export let flat = false
 
    const iconlist = {
        "plus": faPlus,
@@ -24,10 +26,16 @@
    const handleClick = () => dispatch("click")  
 </script>
 
+<style>
+    .hover\:darken:hover {
+        background-color: #ddd;
+    }
+</style>
+
 <button
    on:click={handleClick}
    type="button"
-   class={`flex justify-center items-center h-10 ${circle?"w-10":"px-4 py-2"} bg-${color}-500 text-${textColor} font-bold ${circle?"rounded-full":"rounded-lg"} shadow-lg border-0 hover:bg-${color}-600 hover:shadow-sm transition-shadow duration-300`}
+   class={`${className} flex justify-center items-center h-10 ${circle?"w-10":"px-4 py-2"} bg-${color}-500 text-${textColor} font-bold ${circle?"rounded-full":"rounded-lg"} ${flat?"hover:darken":"shadow-lg"} border-0 hover:bg-${color}-600 hover:shadow-sm transition-shadow duration-300`}
    {disabled}
 >
    {#if loading}

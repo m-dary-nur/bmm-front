@@ -137,8 +137,13 @@ import thousand from "../../../helpers/thousand";
                   <tr class={(i % 2) > 0 ? "bg-gray-100" : ""}>
                      {#each heads as head (head.key)}
                         <td class={`px-4 py-2 border border-gray-200 min-w-42 md:min-w-0 ${head.align === "right" ? "text-right" : "text-left"}`}>
-                           {@html head.render ? head.render(data) : data[head.key]
-                        }</td>
+                           <div class="flex flex-col">
+                              {@html head.render ? head.render(data) : data[head.key]}
+                              {#if head.key === "itemId"}
+                                 <span class="text-xs text-gray-500">{data.description}</span>
+                              {/if}
+                           </div>
+                        </td>
                      {/each}
                   </tr>
                {/each}
@@ -151,14 +156,14 @@ import thousand from "../../../helpers/thousand";
          </table>
 
          <div class="flex justify-end mb-8">
-            <div class="whitespace-pre-line flex flex-col w-3/6 px-4">
+            <div class="whitespace-pre-line flex flex-col w-2/6 px-4">
                {$branch.captionPurchase}
             </div>
             <div class="w-1/6"></div>
-            <div class="flex flex-col w-2/6 px-4">
+            <div class="flex flex-col w-2/6 pl-4 pr-2">
                <div class="flex justify-between">
                   <p class="text-right font-bold">TOTAL</p>
-                  <p class="text-right border-b border-gray-500">{thousand(grandTotal)}</p>
+                  <p class="text-right border-b border-gray-500 px-2">{thousand(grandTotal)}</p>
                </div>
             </div>
          </div>

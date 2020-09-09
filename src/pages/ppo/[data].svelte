@@ -252,14 +252,16 @@
                            }</td>
                         {/each}
                         <td class="w-2 px-4 py-2 border-l border-r border-t border-gray-200 min-w-42 md:min-w-0">
-                           <Button
-                              circle
-                              iconOnly
-                              icon="trash-alt"
-                              color="red"
-                              textColor="white"
-                              on:click={() => removeDetail(i)}
-                           />
+                           <div class="flex justify-center">
+                              <Button
+                                 circle
+                                 iconOnly
+                                 icon="trash-alt"
+                                 color="red"
+                                 textColor="white"
+                                 on:click={() => removeDetail(i)}
+                              />
+                           </div>
                         </td>
                      </tr>
                   {/each}

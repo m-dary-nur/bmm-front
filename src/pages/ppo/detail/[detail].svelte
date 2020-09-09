@@ -134,14 +134,14 @@
          </table>
 
          <div class="flex justify-end mb-8">
-            <div class="whitespace-pre-line flex flex-col w-3/6 px-4">
+            <div class="whitespace-pre-line flex flex-col w-2/6 pl-4 pr-2">
                {$branch.captionPurchase}
             </div>
             <div class="w-1/6"></div>
             <div class="flex flex-col w-2/6 px-4">
                <div class="flex justify-between">
                   <p class="text-right font-bold">JUMLAH PRODUK</p>
-                  <p class="text-right border-b-2 bordr-gray-500">{totalItem}</p>
+                  <p class="text-right border-b-2 bordr-gray-500 px-2">{totalItem} produk</p>
                </div>
             </div>
          </div>
