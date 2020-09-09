@@ -185,13 +185,13 @@
 </script>
 
 <svelte:head>
-	<title>{action === "edit" ? "Ubah" : "Buat"} Order Pembelian | {$appname}</title>
+	<title>{action === "edit" ? "Ubah" : "Buat"} Penerimaan Pembelian | {$appname}</title>
 </svelte:head>
 
 {#if $menu && allow("po", action)}
 <div in:fade class="pt-2 md:pt-8">
    <div class="flex justify-between items-center px-4 pb-4 md:px-8 border-b border-gray-200 md:border-transparent">
-      <h3 class="text-theme text-lg font-bold">{action === "edit" ? "Ubah" : "Buat"} Order Pembelian</h3>
+      <h3 class="text-theme text-lg font-bold">{action === "edit" ? "Ubah" : "Buat"} Penerimaan Pembelian</h3>
       <Button 
          circle
          iconOnly
@@ -316,7 +316,7 @@
                         <td class="px-4 py-2 border-l border-r border-t border-gray-200 min-w-42 md:min-w-0">{i+1}</td>
                         {#each heads as head (head.key)}
                            <td class="px-4 py-2 border-l border-r border-t border-gray-200 min-w-42 md:min-w-0">
-                              {#if editState[i] === true && ((!data.ppoId && head.key === "qty") || head.key === "price")}
+                              {#if editState[i] === true && (head.key === "qty" || head.key === "price")}
                                  <div class="flex items-center">
                                     <Field bind:value={data[head.key]} />{#if head.key === "qty"} <span class="pl-2">{data.unit}</span>{/if} 
                                  </div>

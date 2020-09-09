@@ -5,7 +5,7 @@
    import moment from "moment"
 
    import { appname, menu } from "../../stores"
-   import { init, ppo } from "../../stores/data"
+   import { init, po, suppliers } from "../../stores/data"
    import fetch from "../../helpers/fetch"
    import PageUnauthorized from "../../components/PageUnauthorized.svelte"
    import Button from "../../components/buttons/Button.svelte"
@@ -13,36 +13,41 @@
    import { toast } from "../../components/toast"      
 
    const options = {
-      datas: ppo,
-      countLabel: "pre order",
+      datas: po,
+      countLabel: "order",
       heads: [
          { key: "date", label: "tanggal", render: x => moment(x.date).format("DD MMM YYYY") },
          { key: "no", label: "nomor" },
          { key: "ref", label: "referensi" },
+         { key: "supplierId", label: "Pemasok", render: x => {
+            const o = $suppliers.find(y => y.id === x.supplierId)
+            if (o) return o.name
+            return "-"
+         }},
          { key: "description", label: "keterangan", render: x => x.description !== null && x.description !== "" ? x.description : "-" },
-         { key: "status", label: "status", render: x => (x.status === 0 ? "belum selesai" : (x.status === 1 ? "sebagian" : (x.status === 2 ? "selesai" : "ditutup")))},
+         { key: "status", label: "status", render: x => (x.status === 1 ? "belum selesai" : (x.status === 2 ? "sebagian" : "selesai")) },
       ],
       actions: [
          {
-            key: "ppo",
+            key: "po",
             action: "edit",
             label: "ubah",
             icon: "pencil-alt",
             iconClass: "text-yellow-500",     
             disabled: x => x.status > 0,       
-            execute: data => $goto(`/ppo/${data.id}`),
+            execute: data => $goto(`/po/${data.id}`),
          },
          {
-            key: "ppo",
+            key: "po",
             action: "detail",
             label: "detail",
             icon: "file-alt",
-            iconClass: "text-blue-500",  
-            disabled: x => false,
-            execute: data => $goto(`/ppo/detail/${data.id}`),
+            iconClass: "text-blue-500",     
+            disabled: x => x.status > 0,       
+            execute: data => $goto(`/po/detail/${data.id}`),
          },
          {
-            key: "ppo",
+            key: "po",
             action: "delete",
             label: "hapus",
             icon: "trash-alt",
@@ -52,7 +57,7 @@
                const label = data.no
                const isConfirm = window.confirm(`Apakah yakin menghapus pre order pembelian "${label}" ?`)
                if (isConfirm) {
-                  fetch.del(`/ppo/${data.id}`, { label }).then(res => {
+                  fetch.del(`/po/${data.id}`, { label }).then(res => {
                      if (res.success) {
                         toast.success("Berhasil dihapus", res.message)
                      } else {
@@ -69,26 +74,26 @@
 
 
    onMount(() => {
-      init("ppo")
+      init("po")
    })
 </script>
 
 <svelte:head>
-	<title>Pre Order Pembelian | {$appname}</title>
+	<title>Penerimaan Pembelian | {$appname}</title>
 </svelte:head>
 
-{#if $menu && allow("ppo", "view")}
+{#if $menu && allow("po", "view")}
 <div in:fade class="pt-2 md:pt-8">
    <div class="flex justify-between items-center px-4 md:px-8 ">
-      <h3 class="text-theme text-lg font-bold">Pre Order Pembelian</h3>
+      <h3 class="text-theme text-lg font-bold">Penerimaan Pembelian</h3>
       <Button 
          circle
          iconOnly
          icon="plus"
          color="green"
          textColor="white"
-         on:click={() => $goto("/ppo/new")} 
-         disabled={$menu && !allow("ppo", "add")}
+         on:click={() => $goto("/po/new")} 
+         disabled={$menu && !allow("po", "add")}
       />
    </div>
    <div class="w-full md:px-8">

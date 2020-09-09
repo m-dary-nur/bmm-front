@@ -1,23 +1,26 @@
 <script>
-    import { createEventDispatcher } from "svelte";
+   import { createEventDispatcher } from "svelte";
+   
+   export let value 
+   export let disabled = false
+   export let placeholder = ""
+
+
+   const handleDisabled = e => { if (disabled) e.preventDefault() }
+   const handleInput = e => {
+      value = e.target.value
+   }
+   const handleClick = e => {
+      e.target.select()
+   }
+</script>
     
-       export let type = "text"
-       export let value 
-       export let disabled = false
-       export let placeholder = ""
-    
-    
-       const handleDisabled = e => { if (disabled) e.preventDefault() }
-       const handleInput = e => {
-          value = e.target.value
-       }
-    </script>
-    
-    <input 
-       {type}
+    <input
        {value}
        on:keydown={handleDisabled}
        on:input={handleInput}
+       on:click={handleClick}
+       pattern="{String.raw`\d{3}.\d{3}.\d{3}-\d{2}`}"
        {disabled}
        {placeholder}
        class="px-3 py-1 leading-7 border border-gray-300 rounded-lg focus:border-theme transition-colors duration-300" 

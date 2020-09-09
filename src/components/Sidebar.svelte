@@ -49,7 +49,10 @@
 			}
 			return returner
 		}
-	})
+   })
+   $: if ($menu) {
+      mparent = $menu.filter(x => x.parentId === 0)
+   }
 </script>
 
 <div class="z-50 absolute md:relative h-full animate-slide-in-right">

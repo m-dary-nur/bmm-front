@@ -74,7 +74,7 @@
           <tbody>            
              {#if dataFilter.length > 0}
                 {#each dataFilter as data, i (data.id)}
-                   <tr class="hover:bg-gray-100">
+                   <tr class={`${data.status === 2 ? "text-gray-500" : ""} hover:bg-gray-100`}>
                       <td class="px-4 py-2 border-t border-gray-200 min-w-42 md:min-w-0">{i + 1}</td>
                       {#each heads as head (head.key)}
                          <td class="px-4 py-2 border-l border-r border-t border-gray-200 min-w-42 md:min-w-0">                     
@@ -86,7 +86,7 @@
                       {/each}
                       <td class="p-1 flex justify-evenly items-center border-t border-gray-200 min-w-42 md:min-w-0">
                          {#each actions as action}
-                            <button on:click={() => action.execute(data)} disabled={$menu && !allow(action.key, action.action)} class="flex justify-center items-center w-10 h-10 hover:bg-theme-100 border-0 rounded-full transition-colors duration-300">
+                            <button on:click={() => action.execute(data)} disabled={(action.disabled && action.disabled(data)) || ($menu && !allow(action.key, action.action))} class="flex justify-center items-center w-10 h-10 hover:bg-theme-100 border-0 rounded-full transition-colors duration-300">
                                <Fa icon={icons[action.icon]} class={action.iconClass} />                           
                             </button>
                          {/each}

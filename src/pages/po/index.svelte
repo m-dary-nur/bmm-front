@@ -25,7 +25,7 @@
             return "-"
          }},
          { key: "description", label: "keterangan", render: x => x.description !== null && x.description !== "" ? x.description : "-" },
-         { key: "status", label: "status", render: x => (x.status === 1 ? "belum selesai" : (x.status === 2 ? "sebagian" : "selesai")) },
+         { key: "status", label: "status", render: x => (x.status === 0 ? "belum selesai" : (x.status === 1 ? "sebagian" : (x.status === 2 ? "selesai" : "ditutup")))},
       ],
       actions: [
          {
@@ -42,8 +42,7 @@
             action: "detail",
             label: "detail",
             icon: "file-alt",
-            iconClass: "text-blue-500",     
-            disabled: x => x.status > 0,       
+            iconClass: "text-blue-500",      
             execute: data => $goto(`/po/detail/${data.id}`),
          },
          {

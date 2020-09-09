@@ -29,7 +29,7 @@ export const setSession = data => {
       if ("privileges" in e) {
          const allmenu = get(menus)
          const newMenu = allmenu.filter(x => x.parentId === 0 || e.privileges.indexOf(x.id) !== -1)
-         menu.set(newMenu)
+         menu.set([...newMenu])
       }
       personal.update(old => ({ ...old, ...e }))
    })
