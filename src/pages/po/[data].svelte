@@ -43,6 +43,7 @@
       ratio: 1,
       unit: "",
       price: 0,
+      total: 0,
       description: "",
    }
    const heads = [
@@ -90,6 +91,8 @@
          const { unit, ratio } = units[0]
          formdet.unit = unit
          formdet.ratio = ratio
+         formdet.price = 0
+         formdet.total = 0
       }
    }
 
@@ -286,7 +289,7 @@
                         !formdet.dateRequired || formdet.dateRequired === "" ||
                         !formdet.qty || formdet.qty === "" ||
                         !formdet.unit || formdet.unit === "" ||
-                        !formdet.price || formdet.price === ""
+                        formdet.price === null || formdet.price === ""
                      }
                      on:click={addDetail}
                   >
@@ -294,6 +297,7 @@
                   </Button>             
                </div>
             </div>
+            {JSON.stringify(formdet)}
             <table class="w-full mt-4">
                <thead>
                   <tr>

@@ -150,15 +150,11 @@
                   <Field bind:value={form.barcodeGlobal} />
                   <label>barcode nasional</label>
                </div>
-               <div class="control md:w-1/3">
-                  <Field bind:value={form.barcode} />
-                  <label>barcode produk</label>
-               </div>   
+               <div class="control md:w-2/3">
+                  <Select bind:value={form.supplierId} items={$suppliers} itemId="id" itemLabel={x => `${x.code} - ${x.name}`} searchable />
+                  <label>Pemasok</label>
+               </div>
             </div>  
-            <div class="control md:w-2/3">
-               <Select bind:value={form.supplierId} items={$suppliers} itemId="id" itemLabel={x => `${x.code} - ${x.name}`} searchable />
-               <label>Pemasok</label>
-            </div>
             <div class="flex flex-col md:flex-row">					
                <div class="control md:w-1/2">
                   <Field bind:value={form.name} />
