@@ -6,7 +6,7 @@
    import Big from "big.js"
 
 	import { appname, menu } from "../../stores"
-   import { init, getDataById, getDataArrayById, ppo, ppodet, po, suppliers, items } from "../../stores/data"
+   import { init, getDataById, getDataArrayById, po, podet, warehouses, suppliers, items } from "../../stores/data"
 
    import diff from "../../helpers/diff"
    import fetch from "../../helpers/fetch"
@@ -20,6 +20,8 @@
 	import Textarea from "../../components/inputs/Textarea.svelte"
 	import Select from "../../components/inputs/Select.svelte"
 	import Switch from "../../components/inputs/Switch.svelte"
+import Detail from "./detail/[detail].svelte"
+import { faInfo } from "@fortawesome/pro-regular-svg-icons";
 
    
    export let data
@@ -29,16 +31,15 @@
    const action = data === "new" ? "add" : "edit"
 	const initialState = {
       id: "",
-      ppoId: "",
+      poId: "",
       supplierId: "",
+      warehouseId: "",
       date: today,
       ref: "",
-      address: "",
 		description: "",
    }
    const initialStateDet = {
       itemId: "",
-      dateRequired: today,
       qty: 1,
       ratio: 1,
       unit: "",
@@ -47,27 +48,32 @@
       description: "",
    }
    const heads = [
-      { key: "dateRequired", label: "tgl. dibutuhkan", render: x => moment(x.dateRequired).format("DD MMM YYYY")},
       { key: "itemId", label: "produk", render: x => {
          const o = $items.find(y => y.id === x.itemId)
          if (o) return `${o.barcodeGlobal ? '<i>('+o.barcodeGlobal+')</i> ' : ''}<b>${o.barcode}</b> - ${o.name}`
          return "-"
       }},
-      { key: "qty", label: "jumlah", render: x => {
+      { key: "qtyLeft", label: "jumlah order", render: x => {
+         const y = $podet.filter(z => z.poId === form.poId).find(z => z.id === (id ? x.podetId : x.id))
+         if (y.ratio === 1) {
+            return `${id ? y.qty : y.qtyLeft} ${y.unit}`
+         }
+         const o = $items.find(z => z.id === x.itemId)
+         return `${id ? y.qty : y.qtyLeft} ${y.unit} ${y.ratio > 1 ? '(± '+(id ? y.qty : y.qtyLeft)*y.ratio+' '+o.unit1+')' : '' }`
+      } },
+      { key: "qty", label: "jumlah diterima", fontColor: x => x.qty > x.qtyLeft ? "text-green-500 font-bold" : (x.qty < x.qtyLeft ? "text-red-500 font-bold" : ""), render: x => {
          if (x.ratio === 1) {
             return `${x.qty} ${x.unit}`
          }
          const o = $items.find(y => y.id === x.itemId)
          return `${x.qty} ${x.unit} ${x.ratio > 1 ? '(± '+x.qty*x.ratio+' '+o.unit1+')' : '' }`
       } },
-      { key: "price", label: "harga", render: x => thousand(x.price)},
-      { key: "total", label: "total", render: x => x.qty === "" || x.price === "" ? 0 : thousand(new Big(x.price).times(x.qty).toPrecision())},
    ]
    
 	let form = {...initialState}
    let formdet = {...initialStateDet}
+   let info = {}
    let editState = {}
-   let usingPpo = false
    let detail = []
    let loading = false
    let units = []
@@ -76,56 +82,35 @@
    
    const allow = (key, action) => $menu.findIndex(x => x.key === key && x.action === action) !== -1
 
-   const itemIdChanged = () => {
-      const item = $items.find(x => x.id === formdet.itemId)
-      units = []
-      if (item) {
-         let newUnits = []
-         for (let i = 1; i < 6; i++) {
-            if (item[`unit${i}`] === undefined || item[`unit${i}`] === "" || item[`unit${i}`] === null) {
-               break
-            }
-            newUnits = [...newUnits, {unit: item[`unit${i}`], ratio: item[`ratio${i}`]}]
-         }
-         units = newUnits
-         const { unit, ratio } = units[0]
-         formdet.unit = unit
-         formdet.ratio = ratio
-         formdet.price = 0
-         formdet.total = 0
-      }
-   }
-
-   const unitChanged = () => {
-      const o = units.find(x => x.unit === formdet.unit)
-      formdet.ratio = o.ratio
-   }
-
-   const addDetail = () => {
-      const i = detail.findIndex(x => x.itemId === formdet.itemId)      
-      if (i === -1) {
-         detail = [...detail, {...formdet}]
-         formdet = {...initialStateDet}
-      }
-   }
-
    const editDetail = (i) => {editState = {...editState, [i]: true}}
 
    const updateDetail = (i) => {editState = {...editState, [i]: false}}
 
    const removeDetail = i => {
       detail = detail.filter((_, xi) => xi !== i)
-   } 
+   }
 
-   const addDetailFromRef = () => {
-      const detailPpo = $ppodet.filter(x => x.ppoId === form.ppoId)
-      detail = [...detail, ...detailPpo.map(x => ({...x, price: 0, total: 0}))]
+   const poChanged = () => {
+      const po = $po.find(x => x.id === form.poId)
+      const supplier = $suppliers.find(x => x.id === po.supplierId)
+
+      info = {...info, supplierName: supplier.name, supplierPhone: supplier.phone, supplierAddress: supplier.address}
+   }
+
+   const addDetailRef = () => {
+      const detailPo = $podet.filter(x => x.poId === form.poId)
+      detail = [...detail, ...detailPo]
+   }
+
+   const resetRef = () => {
+      form.poId = ""
+      detail = []
    }
 
    const insert = () => {
       loading = true
       const log = JSON.stringify({...form, detail })      
-      fetch.post(`/po`, { ...form, detail, log }).then(res => {
+      fetch.post(`/pd`, { ...form, detail, log }).then(res => {
          loading = false
          if (res.success) {
             form = {...initialState}
@@ -142,20 +127,15 @@
       loading = true
       const oldData = $po.find(x => x.id === form.id)
       const log = JSON.stringify(diff({...form, detail}, oldData))
-      fetch.put(`/po`, { ...form, detail, log }).then(res => {
+      fetch.put(`/pd`, { ...form, detail, log }).then(res => {
          loading = false
          if (res.success) {            
             toast.success("Berhasil diubah",res.message)
-            $goto("/po")
+            $goto("/pd")
          } else {
             toast.danger("Gagal",res.message)
          }
       })
-   }
-
-   $: if (!usingPpo) {
-      form.ppoId = ""
-      form.detail = []
    }
 
    $: if (detail) {
@@ -164,20 +144,19 @@
 
 	onMount(() => {
       init("suppliers")
+      init("warehouses")
       init("items")
-      init("ppo")
-      init("ppodet")
       init("po")
-      init("podet").then(() => {
+      init("podet")
+      init("pd")
+      init("pddet").then(() => {
          if (action === "edit") {
-            const data = getDataById("po", id)
-            const datadet = getDataArrayById("podet", id, "poId", true)
-            if (data.ppoId) {
-               usingPpo = true
-            }
+            const data = getDataById("pd", id)
+            const datadet = getDataArrayById("pddet", id, "pdId", true)
             form = { ...form, ...{...data, date: moment(data.date).format("YYYY-MM-DD")} }
             if (datadet.length > 0) {
-               detail = datadet.map(x => ({ ...x, dateRequired: moment(x.dateRequired).format("YYYY-MM-DD")})).sort((x, y) => x.id - y.id)
+               detail = datadet.sort((x, y) => x.id - y.id)
+               poChanged()
             }
          }
       })
@@ -198,7 +177,7 @@
          icon="reply"
          color="red"
          textColor="white"
-         on:click={() => $goto("/po")} 
+         on:click={() => $goto("/pd")} 
          disabled={$menu && !allow("po", "view")} 
       />
    </div> 
@@ -215,88 +194,63 @@
                   <label>referensi</label>
                </div>                
             </div>
-            <div class="flex flex-col md:flex-row"> 
-               <div class="control md:w-2/3">
-                  <Select bind:value={form.supplierId} items={$suppliers} itemId="id" itemLabel={x => `${x.code} - ${x.name}`} searchable />
-                  <label>pemasok *</label>
-               </div> 
+            <div class="control md:w-1/2">
+               <Select bind:value={form.supplierId} items={$suppliers} itemId="id" itemLabel={x => `${x.name} ${x.address !== "" && x.address !== "-" ? "- " + x.address : ""}`} searchable disabled={detail.length > 0 || id} />
+               <label>pemasok *</label>
             </div> 
-            <div class="control">
-               <Textarea bind:value={form.address} />
-               <label>alamat pengiriman *</label>
-            </div>
-            <div class="control md:w-1/3">
-               <Switch bind:checked={usingPpo} label="referensi pre order pembelian" disabled={detail.length > 0 || id} />
-            </div>
-            {#if usingPpo}
             <div class="flex flex-col md:flex-row">
                <div class="control md:w-1/2">
-                  <Select bind:value={form.ppoId} items={$ppo} itemId="id" itemLabel={x => `${moment(x.date).format("DD MMM YYYY")} - ${x.no} (${x.ref})`} searchable disabled={detail.length > 0 || id} />
-                  <label>pre order pembelian</label>
+                  <Select bind:value={form.poId} items={$po.filter(x => x.status < 2 && x.supplierId === form.supplierId)} itemId="id" itemLabel={x => `${moment(x.date).format("DD MMM YYYY")} - ${x.no} ${x.ref ? "("+x.ref+")" : ""}`} on:change={poChanged} searchable disabled={detail.length > 0 || id} />
+                  <label>order pembelian *</label>
                </div> 
                <div class="flex justify-center items-end pb-2">
-                  <Button 
-                     color="green"
-                     textColor="white"
-                     disabled={detail.length > 0 || id || !form.ppoId || form.ppoId === ""}
-                     on:click={addDetailFromRef}
-                  >
-                     tambah
-                  </Button>   
+                  {#if detail.length === 0}
+                     <Button 
+                        color="green"
+                        textColor="white"
+                        disabled={detail.length > 0 || id || !form.poId || form.poId === ""}
+                        on:click={addDetailRef}
+                     >
+                        pilih
+                     </Button>
+                  {:else}
+                     {#if !id}
+                        <Button 
+                           color="red"
+                           textColor="white"
+                           on:click={resetRef}
+                        >
+                           reset
+                        </Button>
+                     {/if}
+                  {/if}
                </div>
+               <div class="control md:w-1/2">
+                  <Select bind:value={form.warehouseId} items={$warehouses} itemId="id" itemLabel={x => `${x.name} ${x.address !== "" && x.address !== "-" ? "- " + x.address : ""}`} searchable disabled={id} />
+                  <label>gudang *</label>
+               </div> 
             </div> 
+            {#if form.poId}
+            <div class="flex flex-col md:flex-row"> 
+               <div class="control md:w-1/2">
+                  <label>{info.supplierName}</label>
+                  <label>pemasok</label>
+               </div> 
+               <div class="control md:w-1/2">
+                  <label>{info.supplierPhone}</label>
+                  <label>no. telepon pemasok</label>
+               </div> 
+            </div>
+            <div class="control">
+               <label>{info.supplierAddress}</label>
+               <label>alamat pemasok</label>
+            </div>
             {/if}
             <div class="control">
                <Textarea bind:value={form.description} />
                <label>deskripsi</label>
             </div>
             <h4 class="mt-10 text-theme-500 text-md font-bold border-b border-theme">Detail</h4>
-            <div class="flex flex-col md:flex-row">
-               <div class="control md:w-4/6">
-                  <Select bind:value={formdet.itemId} items={itemsFiltered} itemId="id" itemLabel={x => `${x.barcodeGlobal ? '('+x.barcodeGlobal+') ':''}${x.barcode} - ${x.name}`} on:change={itemIdChanged} searchable />
-                  <label>produk *</label>
-               </div> 
-               <div class="control md:w-2/6">
-                  <Field type="date" bind:value={formdet.dateRequired} />
-                  <label>tgl. dibutuhkan *</label>
-               </div>                
-            </div>
-            <div class="flex flex-col md:flex-row">
-               <div class="control md:w-2/6">
-                  <FieldNumber bind:value={formdet.qty} />
-                  <label>jumlah *</label>
-               </div> 
-               <div class="control md:w-2/6">
-                  <Select bind:value={formdet.unit} items={units} on:change={unitChanged} itemId="unit" itemLabel="unit" />
-                  <label>satuan *</label>
-               </div>
-               <div class="control md:w-2/6">
-                  <FieldNumber bind:value={formdet.price} />
-                  <label>harga *</label>
-               </div> 
-            </div>
-            <div class="flex flex-col md:flex-row">
-               <div class="control md:w-4/6">
-                  <Textarea bind:value={formdet.description} />
-                  <label>deskripsi lainnya</label>
-               </div>
-               <div class="flex justify-center items-end pb-2 md:w-2/6">
-                  <Button 
-                     color="yellow"
-                     textColor="white"
-                     disabled={
-                        !formdet.itemId || formdet.itemId === "" ||
-                        !formdet.dateRequired || formdet.dateRequired === "" ||
-                        !formdet.qty || formdet.qty === "" ||
-                        !formdet.unit || formdet.unit === "" ||
-                        formdet.price === null || formdet.price === ""
-                     }
-                     on:click={addDetail}
-                  >
-                     tambah
-                  </Button>             
-               </div>
-            </div>
             <table class="w-full mt-4">
                <thead>
                   <tr>
@@ -315,8 +269,8 @@
                      <tr>
                         <td class="px-4 py-2 border-l border-r border-t border-gray-200 min-w-42 md:min-w-0">{i+1}</td>
                         {#each heads as head (head.key)}
-                           <td class="px-4 py-2 border-l border-r border-t border-gray-200 min-w-42 md:min-w-0">
-                              {#if editState[i] === true && (head.key === "qty" || head.key === "price")}
+                           <td class={`${head.fontColor ? head.fontColor(data) : ""} px-4 py-2 border-l border-r border-t border-gray-200 min-w-42 md:min-w-0`}>
+                              {#if editState[i] === true && head.key === "qty"}
                                  <div class="flex items-center">
                                     <Field bind:value={data[head.key]} />{#if head.key === "qty"} <span class="pl-2">{data.unit}</span>{/if} 
                                  </div>
@@ -325,40 +279,46 @@
                               {/if}
                            </td>
                         {/each}
-                        <td class="flex justify-between min-w-0 md:min-w-0 px-4 py-2 border-l border-r border-t border-gray-200">
-                           {#if editState[i] === true}
-                              <Button
-                                 circle
-                                 iconOnly
-                                 icon="save"
-                                 color="green"
-                                 textColor="white"
-                                 on:click={() => updateDetail(i)}
-                              />
-                           {:else}
-                              <Button
-                                 circle
-                                 iconOnly
-                                 icon="pencil-alt"
-                                 color="yellow"
-                                 textColor="white"
-                                 on:click={() => editDetail(i)}
-                              />
-                              <Button
-                                 circle
-                                 iconOnly
-                                 icon="trash-alt"
-                                 color="red"
-                                 textColor="white"
-                                 on:click={() => removeDetail(i)}
-                              />                        
-                           {/if}
+                        <td class="px-4 py-2 border-l border-r border-t border-gray-200 md:min-w-0">
+                           <div class="flex justify-center">
+                              {#if editState[i] === true}
+                                 <Button
+                                    circle
+                                    iconOnly
+                                    icon="save"
+                                    color="green"
+                                    textColor="white"
+                                    on:click={() => updateDetail(i)}
+                                 />
+                              {:else}
+                                 <Button
+                                    circle
+                                    iconOnly
+                                    icon="pencil-alt"
+                                    color="yellow"
+                                    textColor="white"
+                                    on:click={() => editDetail(i)}
+                                    />
+                                    {#if !data.ppodetId && (!id && !data.id)}
+                                    <Button
+                                       disabled={!(!id && !data.id)}
+                                       circle
+                                       iconOnly
+                                       icon="trash-alt"
+                                       color="red"
+                                       textColor="white"
+                                       className="ml-4"
+                                       on:click={() => removeDetail(i)}
+                                    />                        
+                                 {/if}
+                              {/if}
+                           </div>
                         </td>
                      </tr>
                   {/each}
                   {:else}
                      <tr>
-                        <td colspan={heads.length + 2} class="text-center px-4 py-2 border-l border-r border-t border-gray-200">Tidak ada data.</td>
+                        <td colspan={heads.length + 2} class="text-center px-4 border-l border-r border-t border-gray-200">Tidak ada data.</td>
                      </tr>
                   {/if}
                </tbody>
@@ -372,7 +332,8 @@
                   disabled={
                      !form.date || form.date === "" ||
                      !form.supplierId || form.supplierId === "" ||
-                     !form.address || form.address === "" ||
+                     !form.poId || form.poId === "" ||
+                     !form.warehouseId || form.warehouseId === "" ||
                      !detail.length || detail.length === 0
                   }
                >
@@ -386,4 +347,3 @@
 {:else}
    <PageUnauthorized />
 {/if}
-

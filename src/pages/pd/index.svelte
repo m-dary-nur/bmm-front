@@ -5,7 +5,7 @@
    import moment from "moment"
 
    import { appname, menu } from "../../stores"
-   import { init, po, suppliers } from "../../stores/data"
+   import { init, pd, suppliers, warehouses } from "../../stores/data"
    import fetch from "../../helpers/fetch"
    import PageUnauthorized from "../../components/PageUnauthorized.svelte"
    import Button from "../../components/buttons/Button.svelte"
@@ -13,8 +13,8 @@
    import { toast } from "../../components/toast"      
 
    const options = {
-      datas: po,
-      countLabel: "order",
+      datas: pd,
+      countLabel: "penerimaan",
       heads: [
          { key: "date", label: "tanggal", render: x => moment(x.date).format("DD MMM YYYY") },
          { key: "no", label: "nomor" },
@@ -24,30 +24,34 @@
             if (o) return o.name
             return "-"
          }},
+         { key: "warehouseId", label: "Gudang", render: x => {
+            const o = $warehouses.find(y => y.id === x.warehouseId)
+            if (o) return o.name
+            return "-"
+         }},
          { key: "description", label: "keterangan", render: x => x.description !== null && x.description !== "" ? x.description : "-" },
-         { key: "status", label: "status", render: x => (x.status === 1 ? "belum selesai" : (x.status === 2 ? "sebagian" : "selesai")) },
+         { key: "status", label: "status", render: x => (x.status === 0 ? "belum selesai" : (x.status === 1 ? "sebagian" : (x.status === 2 ? "selesai" : "ditutup")))},
       ],
       actions: [
          {
-            key: "po",
+            key: "pd",
             action: "edit",
             label: "ubah",
             icon: "pencil-alt",
             iconClass: "text-yellow-500",     
             disabled: x => x.status > 0,       
-            execute: data => $goto(`/po/${data.id}`),
+            execute: data => $goto(`/pd/${data.id}`),
          },
          {
-            key: "po",
+            key: "pd",
             action: "detail",
             label: "detail",
             icon: "file-alt",
-            iconClass: "text-blue-500",     
-            disabled: x => x.status > 0,       
-            execute: data => $goto(`/po/detail/${data.id}`),
+            iconClass: "text-blue-500",      
+            execute: data => $goto(`/pd/detail/${data.id}`),
          },
          {
-            key: "po",
+            key: "pd",
             action: "delete",
             label: "hapus",
             icon: "trash-alt",
@@ -57,7 +61,7 @@
                const label = data.no
                const isConfirm = window.confirm(`Apakah yakin menghapus pre order pembelian "${label}" ?`)
                if (isConfirm) {
-                  fetch.del(`/po/${data.id}`, { label }).then(res => {
+                  fetch.del(`/pd/${data.id}`, { label }).then(res => {
                      if (res.success) {
                         toast.success("Berhasil dihapus", res.message)
                      } else {
@@ -74,7 +78,9 @@
 
 
    onMount(() => {
-      init("po")
+      init("suppliers")
+      init("warehouses")
+      init("pd")
    })
 </script>
 
@@ -82,7 +88,7 @@
 	<title>Penerimaan Pembelian | {$appname}</title>
 </svelte:head>
 
-{#if $menu && allow("po", "view")}
+{#if $menu && allow("pd", "view")}
 <div in:fade class="pt-2 md:pt-8">
    <div class="flex justify-between items-center px-4 md:px-8 ">
       <h3 class="text-theme text-lg font-bold">Penerimaan Pembelian</h3>
@@ -92,8 +98,8 @@
          icon="plus"
          color="green"
          textColor="white"
-         on:click={() => $goto("/po/new")} 
-         disabled={$menu && !allow("po", "add")}
+         on:click={() => $goto("/pd/new")} 
+         disabled={$menu && !allow("pd", "add")}
       />
    </div>
    <div class="w-full md:px-8">

@@ -77,7 +77,7 @@
       class={`w-full ${showOptions ? "border-l border-t border-r border-theme rounded-t-lg" : "border border-gray-300 rounded-lg"} px-3 py-1 leading-7 flex justify-between items-center transition-colors duration-300`} 
       {disabled}
    >
-      <span>
+      <span class="text-selected">
          {#if index !== -1}
             {optionLabel(items[index])}
          {:else}
@@ -118,5 +118,13 @@
 
    .mt-9 {
       top: 2.25rem;
+   }
+
+   .text-selected {
+      text-align: left;
+      width: calc(100% - 25px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
    }
 </style>

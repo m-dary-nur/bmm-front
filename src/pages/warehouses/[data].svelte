@@ -26,7 +26,8 @@
       id: "",
       branchId: "",
       name: "",
-		description: "",
+      phone: "",
+		address: "",
 		active: true,
    }
    
@@ -98,19 +99,23 @@
    <div class="w-full md:pt-2 md:px-6 scrolling-auto">
       <div class="w-full md:w-10/12 xl:w-8/12 md:pr-4 md:border-r border-gray-300">
          <form class="w-full">
+            <div class="control md:w-1/2">
+               <Select bind:value={form.branchId} items={$branches} itemId="id" itemLabel="name" />
+               <label>cabang *</label>
+            </div> 
             <div class="flex flex-col md:flex-row">
-               <div class="control md:w-3/6">
-                  <Select bind:value={form.branchId} items={$branches} itemId="id" itemLabel="name" />
-                  <label>cabang *</label>
-               </div> 
-               <div class="control md:w-3/6">
+               <div class="control md:w-1/2">
                   <Field bind:value={form.name} />
                   <label>nama gudang *</label>
+               </div> 
+               <div class="control md:w-1/2">
+                  <Field bind:value={form.phone} />
+                  <label>no. telepon gudang</label>
                </div>                
             </div>
             <div class="control">
-               <Textarea bind:value={form.description} />
-               <label>deskripsi</label>
+               <Textarea bind:value={form.address} />
+               <label>alamat</label>
             </div>
             <div class="sticky bottom-0 bg-white flex justify-between items-center p-2 mt-4 border-t border-gray-300 shadow-bottom-bar">
                <Switch bind:checked={form.active} label="aktifkan gudang ini" />

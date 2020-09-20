@@ -14,13 +14,13 @@ import { createEventDispatcher } from "svelte";
 </script>
 
 <input 
-   {type}
+   type={type === "date" && disabled ? "text" : type}
    {value}
    on:keydown={handleDisabled}
    on:input={handleInput}
    {disabled}
    {placeholder}
-   class="px-3 py-1 leading-7 border border-gray-300 rounded-lg focus:border-theme transition-colors duration-300" 
+   class="w-full px-3 py-1 leading-7 bg-transparent border border-gray-300 rounded-lg focus:border-theme transition-colors duration-300" 
    spellcheck="false" 
    autocomplete="off" 
 />

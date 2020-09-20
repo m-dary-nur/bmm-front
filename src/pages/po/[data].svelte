@@ -20,7 +20,6 @@
 	import Textarea from "../../components/inputs/Textarea.svelte"
 	import Select from "../../components/inputs/Select.svelte"
 	import Switch from "../../components/inputs/Switch.svelte"
-import Detail from "./detail/[detail].svelte"
 
    
    export let data
@@ -30,7 +29,7 @@ import Detail from "./detail/[detail].svelte"
    const action = data === "new" ? "add" : "edit"
 	const initialState = {
       id: "",
-      ppoId: "",
+      poId: "",
       supplierId: "",
       date: today,
       ref: "",
@@ -117,10 +116,6 @@ import Detail from "./detail/[detail].svelte"
    const removeDetail = i => {
       detail = detail.filter((_, xi) => xi !== i)
    } 
-
-   const removeDetailAll = () => {
-      detail = []
-   }
 
    const addDetailRef = () => {
       const detailPpo = $ppodet.filter(x => x.ppoId === form.ppoId)
@@ -241,7 +236,7 @@ import Detail from "./detail/[detail].svelte"
             {#if usingPpo}
             <div class="flex flex-col md:flex-row">
                <div class="control md:w-1/2">
-                  <Select bind:value={form.ppoId} items={$ppo.filter(x => x.status === 0)} itemId="id" itemLabel={x => `${moment(x.date).format("DD MMM YYYY")} - ${x.no} (${x.ref})`} searchable disabled={detail.length > 0 || id} />
+                  <Select bind:value={form.ppoId} items={$ppo.filter(x => x.status === 0)} itemId="id" itemLabel={x => `${moment(x.date).format("DD MMM YYYY")} - ${x.no} ${x.ref ? "("+x.ref+")" : ""}`} searchable disabled={detail.length > 0 || id} />
                   <label>pre order pembelian</label>
                </div> 
                <div class="flex justify-center items-end pb-2">
@@ -252,7 +247,7 @@ import Detail from "./detail/[detail].svelte"
                         disabled={detail.length > 0 || id || !form.ppoId || form.ppoId === ""}
                         on:click={addDetailRef}
                      >
-                        tambah
+                        pilih
                      </Button>
                   {:else}
                      <Button 
@@ -365,10 +360,9 @@ import Detail from "./detail/[detail].svelte"
                                     icon="pencil-alt"
                                     color="yellow"
                                     textColor="white"
-                                    className="mr-4"
                                     on:click={() => editDetail(i)}
-                                 />
-                                 {#if !data.ppodetId && (!id && !data.id)}
+                                    />
+                                    {#if !data.ppodetId && (!id && !data.id)}
                                     <Button
                                        disabled={!(!id && !data.id)}
                                        circle
@@ -376,6 +370,7 @@ import Detail from "./detail/[detail].svelte"
                                        icon="trash-alt"
                                        color="red"
                                        textColor="white"
+                                       className="ml-4"
                                        on:click={() => removeDetail(i)}
                                     />                        
                                  {/if}

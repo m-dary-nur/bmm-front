@@ -21,7 +21,8 @@
             return "-"
          }},
          { key: "name", label: "nama gudang" },
-         { key: "description", label: "deskripsi", render: x => x.description !== null && x.description !== "" ? x.description : "-" },
+         { key: "phone", label: "no. telepon", render: x => x.phone !== null && x.phone !== "" ? x.phone : "-" },
+         { key: "address", label: "alamat", render: x => x.address !== null && x.address !== "" ? x.address : "-" },
          { key: "active", label: "aktif", render: x => (x.active === 1 ? "Ya" : "Tidak") },
       ],
       actions: [
